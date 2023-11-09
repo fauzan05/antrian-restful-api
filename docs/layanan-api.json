@@ -1,0 +1,34 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+      "title":"Layanan API",
+      "version":"1.0"
+    },
+    "servers": [
+      {"url":"http://localhost:8000"}
+    ],
+    "paths": {
+       "/api/layanan": {
+            "get": {
+
+            },
+            "post": {
+
+            },
+            "delete": {
+
+            }
+       },
+       "/api/layanan/{idLayanan}": {
+            "put": {
+
+            },
+            "get": {
+
+            },
+            "delete": {
+                
+            }
+       }
+    }
+  }

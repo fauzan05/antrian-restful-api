@@ -1,0 +1,35 @@
+{
+    "openapi":"3.0.2",
+    "info": {
+      "title":"Antrian API",
+      "version":"1.0"
+    },
+    "servers": [
+      {"url":"http://localhost:8000"}
+    ],
+    "paths": {
+        "/api/antrian": {
+            "post": {
+                "description": "Show all data antrian"
+
+            },
+            "get": {
+
+            },
+            "delete": {
+
+            }
+        },
+        "/api/antrian/{idAntrian}": {
+            "get": {
+
+            },
+            "put": {
+
+            },
+            "delete": {
+
+            }
+        }
+    }
+  }
