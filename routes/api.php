@@ -33,8 +33,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     
     Route::middleware('isAdmin')->group(function() {
         Route::post('/service/create', [ServiceController::class,'create']);
-        Route::put('/service/{idService}', [ServiceController::class,'update'])
-        ->where('idService', '[0-9]+');
+        Route::put('/service', [ServiceController::class,'update']);
         Route::delete('/service/{idService}', [ServiceController::class,'delete'])
         ->where('idService', '[0-9]+');
         Route::delete('/service', [ServiceController::class,'destroy']);

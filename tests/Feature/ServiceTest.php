@@ -105,7 +105,7 @@ class ServiceTest extends TestCase
         $serviceBefore = Service::first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
-        $this->put('/api/service/' . $serviceBefore->id, 
+        $this->put('/api/service', 
         [
             'id' => $serviceBefore->id,
             'name' => 'Layanan CS',

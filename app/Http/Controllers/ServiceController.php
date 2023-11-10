@@ -42,12 +42,12 @@ class ServiceController extends Controller
         ]);
     }
 
-    public function update(ServiceUpdateRequest $request, int $id): JsonResponse
+    public function update(ServiceUpdateRequest $request): JsonResponse
     {
         $data = $request->validated();
-
-        $service = Service::find($id);
-        $service->fill($data);
+        $service = Service::find($data['id']);
+        $service->name = $data['name'];
+        $service->description = $data['description'];
         $service->save();
         return response()->json([
             'success' => true,
