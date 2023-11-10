@@ -56,13 +56,6 @@ class AuthController extends Controller
 
     public function get()
     {
-        $user = auth()->user();
-        if($user->role != 'admin'){
-            throw new HttpResponseException(response()->json([
-                "success" => false,
-                "error_message" => "getting data user must be admin role"
-            ], 401));
-        }
         $user = User::where('role', 'operator')->get();
         return new UserCollection($user);
     }
@@ -96,13 +89,6 @@ class AuthController extends Controller
 
     public function delete(int $id): JsonResponse
     {
-        $user = auth()->user();
-        if($user->role != 'admin'){
-            throw new HttpResponseException(response()->json([
-                "success" => false,
-                "error_message" => "deleting data user must be admin role"
-            ], 401));
-        }
         $user = User::where('id', $id)->where('role', 'operator')->delete();
         return response()->json([
             'success'=> true,

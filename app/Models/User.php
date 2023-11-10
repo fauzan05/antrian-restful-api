@@ -27,6 +27,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    public function hasRole()
+    {
+        return $this->role;
+    }
     /**
      * The attributes that should be hidden for serialization.
      *
