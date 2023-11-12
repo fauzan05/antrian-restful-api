@@ -25,12 +25,14 @@ class UserTest extends TestCase
         $user = User::where('name', 'Fauzan')->first();
         $response->assertStatus(201);
         $response->assertJson([
+            'status' => "OK",
             'data' => [
                 'id' => $user->id,
                 'name' => 'Fauzan',
                 'username' => 'fauzan123',
                 'role' => 'operator'
-            ]
+            ],
+            'error' => null
         ]);
     }
 
@@ -42,24 +44,32 @@ class UserTest extends TestCase
             'username' => 'fauzan123',
             'password' => 'rahasia',
         ]);
-        $response->assertStatus(400);
+        $response->assertStatus(409);
         $response->assertJson([
-            "success" => false,
-            "error_message" => 'username has been already registered'
+            "status" => "Validation Error",
+            "data" => null,
+            "error" => [
+                "error_message" => 'username has been already registered'
+            ]
         ]);
     }
     public function testRegisterFailed()
     {
         $this->post('/api/users/register', [])->assertStatus(400)
             ->assertJson([
-                'error_message' => [
-                    'name' => [
-                        'The name field is required.'
-                    ],
-                    'password' => [
-                        'The password field is required.'
+                "status" => "Validation Error",
+                "data" => null,
+                "error" => [
+                    'error_message' => [
+                        'name' => [
+                            'The name field is required.'
+                        ],
+                        'password' => [
+                            'The password field is required.'
+                        ]
                     ]
                 ]
+                
             ]);
     }
 
@@ -74,13 +84,14 @@ class UserTest extends TestCase
         $this->tokens = $response['token'];
         $response->assertStatus(200);
         $response->assertJson([
-            'success' => true,
+            'status' => "OK",
             'data' => [
                 'id' => $user->id,
                 'name' => 'Fauzan',
                 'username' => 'fauzan123',
                 'role' => 'operator'
-            ]
+            ],
+            'error' => null
         ]);
     }
 
@@ -108,13 +119,14 @@ class UserTest extends TestCase
             'Authorization' => 'Bearer ' . $token
         ])->assertStatus(200)
             ->assertJson([
-                'success' => true,
+                'status' => "OK",
                 'data' => [
                     'id' => $user->id,
                     'name' => 'Fauzan',
                     'username' => 'fauzan123',
                     'role' => 'operator'
-                ]
+                ],
+                'error' => null
             ]);
     }
 
@@ -144,14 +156,14 @@ class UserTest extends TestCase
             'Authorization' => 'Bearer ' . $token
         ])->assertStatus(200)
             ->assertJson([
-                "success" => true,
-                "message" => "user has been updated",
+                "status" => "OK",
                 "data" => [
                     "id" => $user->id,
                     "name" => "Rudi",
                     "username" => "fauzan123",
                     "role" => "operator"
-                ]
+                ],
+                "error" => null
             ]);
     }
 
@@ -214,8 +226,9 @@ class UserTest extends TestCase
             'Authorization' => 'Bearer ' . $token
         ])->assertStatus(200)
             ->assertJson([
-                'success' => true,
-                'message' => 'user has been successfully logged out'
+                'status' => "OK",
+                'data' => null,
+                'error' => null
             ]);
     }
 

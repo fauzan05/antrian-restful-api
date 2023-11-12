@@ -13,10 +13,11 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
-        for( $i = 1; $i <= 4; $i++ ) {
+        for( $i = 0; $i < 4; $i++ ) {
         $service = new Service();
-        $service->name = "Layanan " . $i;
-        $service->description = "Ini adalah layanan " . $i;
+        $service->name = "Layanan " . $i +1;
+        $service->initial = strtoupper(chr(65+$i));
+        $service->description = "Ini adalah layanan " . $i+1;
         $service->save();
         }
     }

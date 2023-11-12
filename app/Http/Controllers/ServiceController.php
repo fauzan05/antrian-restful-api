@@ -8,10 +8,10 @@ use App\Http\Resources\ServiceResource;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ServiceController extends Controller
-{
-    
+{ 
     public function create(ServiceCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -19,8 +19,9 @@ class ServiceController extends Controller
         $service->save();
 
         return response()->json([
-            "success" => true,
-            "data" => new ServiceResource($service)
+            "status" => "OK",
+            "data" => new ServiceResource($service),
+            "error" => null
         ])->setStatusCode(201);
     }
 
@@ -28,8 +29,9 @@ class ServiceController extends Controller
     {
         $service = Service::find($id);
         return response()->json([
-            'success' => true,
-            'data' => new ServiceResource($service)
+            'status' => "OK",
+            'data' => new ServiceResource($service),
+            'error' => null
         ]);
     }
 
@@ -37,21 +39,23 @@ class ServiceController extends Controller
     {
         $service = Service::all();
         return response()->json([
-            'success' => true,
-            'data' => ServiceResource::collection($service)
+            'status' => "OK",
+            'data' => ServiceResource::collection($service),
+            'error' => null
         ]);
     }
 
-    public function update(ServiceUpdateRequest $request): JsonResponse
+    public function update(int $idService, ServiceUpdateRequest $request): JsonResponse
     {
+        $service = Service::find($idService);
         $data = $request->validated();
-        $service = Service::find($data['id']);
-        $service->name = $data['name'];
-        $service->description = $data['description'];
+        $service->fill($data);
         $service->save();
+        $service = Service::find($idService);
         return response()->json([
-            'success' => true,
-            'data' => new ServiceResource($service)
+            'status' => "OK",
+            'data' => new ServiceResource($service),
+            'error' => null
         ])->setStatusCode(200);
     }
 
@@ -61,18 +65,21 @@ class ServiceController extends Controller
         $service->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'the user has been successfully deleted'
+            'status' => "OK",
+            'data' => [
+                'message' => 'the user has been successfully deleted'
+            ],
+            "error" => null
         ]);
     }
 
     public function destroy()
     {
-        Service::truncate();
-
+        DB::delete("delete from services");
         return response()->json([
-            'success' => true,
-            'message' => 'all user has been deleted'
+            'status' => "OK",
+            'data' => null,
+            'error' => null
         ]);
     }
 }

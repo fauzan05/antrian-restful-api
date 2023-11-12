@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\User;
+use App\Models\Counter;
 use Closure;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserHasAdminRole
+class CounterIsExist
 {
     /**
      * Handle an incoming request.
@@ -17,15 +17,15 @@ class EnsureUserHasAdminRole
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = auth()->user();
-        if(($user->hasRole() == 'operator')) {
+        if(!Counter::where('id', $request->idCounter)
+        ->where('user_id', $request->idUser)->exists()){
             throw new HttpResponseException(response()->json([
                 "status" => "Validation Error",
                 "data" => null,
                 "error" => [
-                    "error_message" => "Access Denied! this action must be admin role"
+                    "error_message" => 'counter is not found'
                 ]
-            ], 401));
+            ], 404));
         }else{
             return $next($request);
         }

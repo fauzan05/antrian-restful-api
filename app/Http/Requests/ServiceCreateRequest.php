@@ -12,7 +12,7 @@ class ServiceCreateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user() != null;
+        return true;
     }
 
     /**
@@ -24,13 +24,18 @@ class ServiceCreateRequest extends FormRequest
     {
         return [
             "name" => ["required","string","max:100", "min:2"],
+            "initial" => ["required", "string", "min:1"],
             "description" => ["nullable","string"],
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         throw new HttpResponseException(response([
-            'error_message' => $validator->getMessageBag()
+            'status' => 'Validation Error',
+            'data' => null,
+            'error' => [
+                'error_message' => $validator->getMessageBag()
+            ]    
         ], 400));
     }
 }

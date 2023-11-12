@@ -2,7 +2,10 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\CounterIsExist;
+use App\Http\Middleware\CounterValidation;
 use App\Http\Middleware\EnsureUserHasAdminRole;
+use App\Http\Middleware\InitialServiceValidation;
 use App\Http\Middleware\RegisterValidation;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -67,6 +70,8 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'isAdmin' => EnsureUserHasAdminRole::class,
-        'username' => RegisterValidation::class
+        'username' => RegisterValidation::class,
+        'counterIsExist' => CounterIsExist::class,
+        'initialIsExist' => InitialServiceValidation::class,
     ];
 }

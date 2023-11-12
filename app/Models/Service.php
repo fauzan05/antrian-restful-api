@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Service extends Model
 {
@@ -15,7 +16,14 @@ class Service extends Model
 
     protected $fillable = [
         'name',
-        'description'
+        'initial',
+        'description',
+        'counter_id'
     ];
+
+    public function counter(): HasMany
+    {
+        return $this->hasMany(Counter::class, 'counter_id', 'id');
+    }
 
 }

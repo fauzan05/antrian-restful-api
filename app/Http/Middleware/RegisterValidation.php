@@ -19,9 +19,12 @@ class RegisterValidation
     {
         if(User::where('username', $request->input('username'))->exists()) {
             throw new HttpResponseException(response()->json([
-                "success" => false,
-                "error_message" => 'username has been already registered'
-            ], 400));
+                "status" => "Validation Error",
+                "data" => null,
+                "error" => [
+                    "error_message" => 'username has been already registered'
+                ]
+            ], 409));
         }else {
             return $next($request);
         }

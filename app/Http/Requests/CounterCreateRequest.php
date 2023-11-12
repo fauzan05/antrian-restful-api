@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ServiceUpdateRequest extends FormRequest
+class CounterCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,7 @@ class ServiceUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ["required", "string","max:100", "min:2"],
-            "initial" => ["required", "string", "min:1"],
-            "description" => ["nullable", "string"],
-            "counter_id" => ["nullable", "integer"]
+            'name' => ['required','string','min:3', 'max:100'],
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
@@ -36,7 +33,7 @@ class ServiceUpdateRequest extends FormRequest
             'data' => null,
             'error' => [
                 'error_message' => $validator->getMessageBag()
-            ]      
+            ]    
         ], 400));
     }
 }

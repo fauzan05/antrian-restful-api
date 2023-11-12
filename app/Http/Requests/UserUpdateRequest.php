@@ -12,7 +12,7 @@ class UserUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user() != null;
+        return true;
     }
 
     /**
@@ -30,7 +30,11 @@ class UserUpdateRequest extends FormRequest
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         throw new HttpResponseException(response([
-            'error_message' => $validator->getMessageBag()
+            'status' => 'Validation Error',
+            'data' => null,
+            'error' => [
+                'error_message' => $validator->getMessageBag()
+            ]
         ], 400));
     }
 }

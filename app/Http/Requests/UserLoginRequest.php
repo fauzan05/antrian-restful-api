@@ -30,7 +30,11 @@ class UserLoginRequest extends FormRequest
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         throw new HttpResponseException(response([
-            'error_message' => $validator->getMessageBag()
+            'status' => 'Validation Error',
+            'data' => null,
+            'error' => [
+                'error_message' => $validator->getMessageBag()
+            ]       
         ], 400));
     }
 }
