@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('queues', function (Blueprint $table) {
             $table->id();
+            $table->string('number')->nullable(false);
+            $table->unsignedBigInteger('service_id')->nullable(false);
+            $table->enum('status', ['called','waiting', 'skipped'])->default('waiting')->nullable(false);
             $table->timestamps();
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 

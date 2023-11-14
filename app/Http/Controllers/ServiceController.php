@@ -15,7 +15,10 @@ class ServiceController extends Controller
     public function create(ServiceCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $service = new Service($data);
+        $service = new Service();
+        $service->initial = trim($data['initial']);
+        $service->name = trim($data['name']);
+        $service->description = trim($data['description']);
         $service->save();
 
         return response()->json([
@@ -37,10 +40,9 @@ class ServiceController extends Controller
 
     public function show(): JsonResponse
     {
-        $service = Service::all();
         return response()->json([
             'status' => "OK",
-            'data' => ServiceResource::collection($service),
+            'data' => ServiceResource::collection(Service::all()),
             'error' => null
         ]);
     }
@@ -49,6 +51,9 @@ class ServiceController extends Controller
     {
         $service = Service::find($idService);
         $data = $request->validated();
+        $service->initial = trim($data['initial']);
+        $service->name = trim($data['name']);
+        $service->description = trim($data['description']);
         $service->fill($data);
         $service->save();
         $service = Service::find($idService);

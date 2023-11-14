@@ -6,6 +6,7 @@ use App\Http\Middleware\CounterIsExist;
 use App\Http\Middleware\CounterValidation;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Http\Middleware\InitialServiceValidation;
+use App\Http\Middleware\QueueIsExist;
 use App\Http\Middleware\RegisterValidation;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -73,5 +74,6 @@ class Kernel extends HttpKernel
         'username' => RegisterValidation::class,
         'counterIsExist' => CounterIsExist::class,
         'initialIsExist' => InitialServiceValidation::class,
+        'queueIsExist' => QueueIsExist::class
     ];
 }

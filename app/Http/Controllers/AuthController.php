@@ -21,6 +21,8 @@ class AuthController extends Controller
         $data = $request->validated();
 
         $user = new User($data);
+        $user->name = trim($data['name']);
+        $user->username = trim($data['username']);
         $user->password = Hash::make($data['password']);
         $user->role = 'operator';
         $user->save();
@@ -35,17 +37,8 @@ class AuthController extends Controller
     public function login(UserLoginRequest $request): JsonResponse
     {
         $data = $request->validated();
-        if(Auth::attempt($data)) {
-            $auth = auth()->user();
-            $success['token'] = $auth->createToken('token-login')->plainTextToken;
-
-            return response()->json([
-                "status" => "OK",
-                'data' => new UserResource(auth()->user()),
-                'token' => $success['token'],
-                'error' => null
-            ]);
-        } else {
+        $user = User::where('username', trim($data['username']))->first();
+        if(!$user || !Hash::check($data['password'], $user->password)) {
             throw new HttpResponseException(response()->json([
                 "status" => "Validation Error",
                 'data' => null,
@@ -53,15 +46,22 @@ class AuthController extends Controller
                     "error_message" => "username or password is wrong"
                 ]
             ], 401));
-        }    
+        }
+        $success['token'] = $user->createToken('token-login')->plainTextToken;
+
+        return response()->json([
+            "status" => "OK",
+            'data' => new UserResource($user),
+            'token' => $success['token'],
+            'error' => null
+        ]);  
     }
 
     public function show(): JsonResponse
     {
-        $user = User::where('role', 'operator')->get();
         return response()->json([
             'status' => "OK",
-            new UserCollection($user),
+            new UserCollection(User::where('role', 'operator')->get()),
             'error' => null
         ]);
     }

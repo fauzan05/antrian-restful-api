@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CounterController;
+use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Models\User;
@@ -56,5 +57,15 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/counters', [CounterController::class,'show']);
    
 });
+
+    Route::post('/queues', [QueueController::class, 'create']);
+    Route::get('/queues', [QueueController::class, 'show']);
+    Route::get('/queues/{idQueue}', [QueueController::class, 'get'])
+    ->where('idQueue', '[0-9]+')->middleware('queueIsExist');
+    Route::get('/services/{idService}/queue-count', [QueueController::class, 'count'])
+    ->where('idService', '[0-9]+');
+    Route::put('/queues/{idQueue}', [QueueController::class, 'update'])
+    ->where('idQueue', '[0-9]+')->middleware('queueIsExist');
+    Route::delete('/queues', [QueueController::class,'destroy']);
 
    

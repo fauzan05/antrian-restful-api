@@ -16,7 +16,8 @@ class CounterController extends Controller
     public function create(CounterCreateRequest $request, int $id)
     {
         $data = $request->validated();
-        $counter = new Counter($data);
+        $counter = new Counter();
+        $counter->name = trim($data['name']);
         $counter->user_id = $id;
         $counter->save();
         
@@ -39,10 +40,9 @@ class CounterController extends Controller
 
     public function show()
     {
-        $counter = Counter::all();
         return response()->json([
             'status' => 'OK',
-            'data' => CounterResource::collection($counter),
+            'data' => CounterResource::collection(Counter::all()),
             'error' => null
         ]);
     }
@@ -51,7 +51,7 @@ class CounterController extends Controller
     {
         $counter = Counter::where('id', $idCounter)->first();
         $data = $request->validated();
-        $counter->fill($data);
+        $counter->name = trim($data['name']);
         $counter->user_id = $idUser;
         $counter->save();
         $counter = Counter::where('id', $idCounter)->first();

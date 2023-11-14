@@ -14,7 +14,6 @@ use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    public string $tokens = "";
     public function testRegister()
     {
         $response = $this->post('/api/users/register', [
@@ -81,7 +80,7 @@ class UserTest extends TestCase
             'username' => 'fauzan123',
             'password' => 'rahasia'
         ]);
-        $this->tokens = $response['token'];
+        $user->createToken('test-token')->plainTextToken;
         $response->assertStatus(200);
         $response->assertJson([
             'status' => "OK",
