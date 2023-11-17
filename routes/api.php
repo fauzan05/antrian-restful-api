@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CounterController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Models\User;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -68,4 +71,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     ->where('idQueue', '[0-9]+')->middleware('queueIsExist');
     Route::delete('/queues', [QueueController::class,'destroy']);
 
-   
+    Route::get('/files', [FileController::class, 'index'])->middleware('checkFiles');
+    Route::get('/files/{nameFile}', [FileController::class, 'get'])->middleware('checkFiles');
+
+
+    

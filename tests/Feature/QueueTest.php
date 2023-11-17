@@ -93,7 +93,7 @@ class QueueTest extends TestCase
         ])->assertStatus(201);
         $queue1 = Queue::first();
         $this->put('/api/queues/' . $queue1->id, [
-            'status' => 'called'
+            'status' => 'called' 
         ])->assertStatus(200);
         $queue2 = Queue::first();
         self::assertNotEquals($queue1->status, $queue2->status);
@@ -107,6 +107,7 @@ class QueueTest extends TestCase
         $response = $this->get('/api/services/' . $service->id . '/queue-count')
             ->assertStatus(200);
         Log::info(json_encode($response, JSON_PRETTY_PRINT));
+
     }
 
     public function testDelete()

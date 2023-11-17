@@ -13,8 +13,10 @@ use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class QueueController extends Controller
 {
@@ -45,10 +47,10 @@ class QueueController extends Controller
         $counter = Counter::where('id', $queue->service['counter_id'])->first();
         return response()->json([
             'status' => 'OK',
-            'data' => [
+            'data' => 
                 new QueueResource($queue),
                 new CounterResource($counter)
-            ],
+            ,
             'error' => null
         ]);
     }
@@ -80,24 +82,11 @@ class QueueController extends Controller
 
     public function count(int $idService)
     {
-        $count = Queue::where('service_id', $idService)->where('status', 'called')
-        ->whereDate('created_at', Carbon::today())->orderByDesc('number')->count();
-        $service = Service::where('id', $idService)->first();
-        $counter = Counter::where('id', $service->counter_id)->first();
-        $user = User::find($counter->user_id);
-        $id_audio = explode(" ", $counter->name);
-        $id_audio = end($id_audio);
+        $queue = Queue::where('service_id', $idService)->whereIn('status', ['called', 'skipped'])
+        ->whereDate('created_at', Carbon::today())->orderByDesc('number')->get()->all();
         return response()->json([
             'status' => 'OK',
-            'data' => [
-                'initial' => $service->initial,
-                'number' => $count,
-                'counter' => [
-                    'number_counter' => $id_audio,
-                    'name' => $counter->name,
-                    'operator' => $user->name
-                ]
-            ],
+            'data' => new QueueResource($queue[0]),
             'error' => null
         ]);
     }
@@ -112,4 +101,7 @@ class QueueController extends Controller
             'error' => null
         ]);
     }
+
+   
+
 }
