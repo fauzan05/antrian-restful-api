@@ -28,9 +28,9 @@ class CounterController extends Controller
         ])->setStatusCode(201);
     }
 
-    public function get(int $idUser, int $idCounter)
+    public function get(int $idUser)
     {
-        $counter = Counter::where('id', $idCounter)->where('user_id', $idUser)->first();
+        $counter = Counter::where('user_id', $idUser)->first();
         return response()->json([
             'status'=> 'OK',
             'data' => new CounterResource($counter),

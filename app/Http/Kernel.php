@@ -5,6 +5,7 @@ namespace App\Http;
 use App\Http\Middleware\CheckAudioFiles;
 use App\Http\Middleware\CounterIsExist;
 use App\Http\Middleware\CounterValidation;
+use App\Http\Middleware\CurrentQueue;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Http\Middleware\InitialServiceValidation;
 use App\Http\Middleware\QueueIsExist;
@@ -76,6 +77,7 @@ class Kernel extends HttpKernel
         'counterIsExist' => CounterIsExist::class,
         'initialIsExist' => InitialServiceValidation::class,
         'queueIsExist' => QueueIsExist::class,
-        'checkFiles' => CheckAudioFiles::class
+        'checkFiles' => CheckAudioFiles::class,
+        'currentQueue' => CurrentQueue::class
     ];
 }

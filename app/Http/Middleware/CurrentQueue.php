@@ -2,13 +2,14 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Counter;
 use Closure;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use App\Models\Queue;
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CounterIsExist
+class CurrentQueue
 {
     /**
      * Handle an incoming request.
@@ -17,16 +18,17 @@ class CounterIsExist
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!Counter::where('user_id', $request->idUser)->exists()){
+        $queue = Queue::where('service_id', $request->idService)->whereIn('status', ['called', 'skipped'])
+        ->whereDate('created_at', Carbon::today())->orderByDesc('number')->get()->all() ?? null;
+        if($queue == null) {
             throw new HttpResponseException(response()->json([
-                "status" => "Validation Error",
+                "status" => "Not Found",
                 "data" => null,
                 "error" => [
-                    "error_message" => 'counter is not found'
+                    "error_message" => 'current queue is not found'
                 ]
             ], 404));
-        }else{
-            return $next($request);
         }
+        return $next($request);
     }
 }
