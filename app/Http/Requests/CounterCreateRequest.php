@@ -24,6 +24,8 @@ class CounterCreateRequest extends FormRequest
     {
         return [
             'name' => ['required','string','min:3', 'max:100'],
+            'user_id' => ['required', 'integer'],
+            'service_id' => ['nullable', 'integer']
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

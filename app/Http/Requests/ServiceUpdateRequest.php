@@ -26,7 +26,6 @@ class ServiceUpdateRequest extends FormRequest
             "name" => ["required", "string","max:100", "min:2"],
             "initial" => ["required", "string", "min:1"],
             "description" => ["nullable", "string"],
-            "counter_id" => ["nullable", "integer"]
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

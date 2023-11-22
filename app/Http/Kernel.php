@@ -7,9 +7,15 @@ use App\Http\Middleware\CounterIsExist;
 use App\Http\Middleware\CounterValidation;
 use App\Http\Middleware\CurrentQueue;
 use App\Http\Middleware\EnsureUserHasAdminRole;
+use App\Http\Middleware\GetCounterById;
+use App\Http\Middleware\GetQueueByCounter;
+use App\Http\Middleware\GetQueueByService;
+use App\Http\Middleware\GetServiceById;
+use App\Http\Middleware\HasCounter;
 use App\Http\Middleware\InitialServiceValidation;
 use App\Http\Middleware\QueueIsExist;
 use App\Http\Middleware\RegisterValidation;
+use App\Http\Middleware\UserValidation;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -74,10 +80,13 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'isAdmin' => EnsureUserHasAdminRole::class,
         'username' => RegisterValidation::class,
-        'counterIsExist' => CounterIsExist::class,
+        'getCounterById' => GetCounterById::class,
         'initialIsExist' => InitialServiceValidation::class,
-        'queueIsExist' => QueueIsExist::class,
+        'getQueueById' => QueueIsExist::class,
         'checkFiles' => CheckAudioFiles::class,
-        'currentQueue' => CurrentQueue::class
+        'getQueueByService' => GetQueueByService::class,
+        'getQueueByCounter' => GetQueueByCounter::class,
+        'getServiceById' => GetServiceById::class,
+        'userValidation' => UserValidation::class
     ];
 }

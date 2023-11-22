@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ServiceCreateRequest;
 use App\Http\Requests\ServiceUpdateRequest;
 use App\Http\Resources\ServiceResource;
+use App\Models\Counter;
 use App\Models\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ServiceController extends Controller
-{ 
+{
     public function create(ServiceCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
@@ -49,14 +50,13 @@ class ServiceController extends Controller
 
     public function update(int $idService, ServiceUpdateRequest $request): JsonResponse
     {
-        $service = Service::find($idService);
         $data = $request->validated();
-        $service->initial = trim($data['initial']);
+        $service = Service::find($idService);
         $service->name = trim($data['name']);
+        $service->initial = trim($data['initial']);
         $service->description = trim($data['description']);
         $service->fill($data);
         $service->save();
-        $service = Service::find($idService);
         return response()->json([
             'status' => "OK",
             'data' => new ServiceResource($service),
@@ -66,21 +66,32 @@ class ServiceController extends Controller
 
     public function delete(int $id): JsonResponse
     {
+        /*  jika menghapus service, record antrian akan ikut terhapus
+            sesuai dengan service yang ingin dihapus. Jadi hapus pada saat
+            sebelum app antrian dijalankan
+        */
+
         $service = Service::find($id);
+        Counter::where('service_id', $id)->update([
+            'service_id' => null
+        ]);
         $service->delete();
 
         return response()->json([
             'status' => "OK",
-            'data' => [
-                'message' => 'the user has been successfully deleted'
-            ],
+            'data' => null,
             "error" => null
         ]);
     }
 
     public function destroy()
     {
-        DB::delete("delete from services");
+        $services = Service::all();
+        $results = $services->pluck('id')->all();
+        foreach($results as $result)
+        {
+            $services->find($result)->delete();
+        }
         return response()->json([
             'status' => "OK",
             'data' => null,

@@ -8,19 +8,20 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\CounterResource;
 use App\Http\Resources\UserCollection;
 use App\Models\Counter;
+use App\Models\Queue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CounterController extends Controller
 {
-    public function create(CounterCreateRequest $request, int $id)
+    public function create(CounterCreateRequest $request)
     {
         $data = $request->validated();
         $counter = new Counter();
         $counter->name = trim($data['name']);
-        $counter->user_id = $id;
+        $counter->fill($data);
         $counter->save();
-        
+
         return response()->json([
             'status' => "OK",
             'data' => new CounterResource($counter),
@@ -28,11 +29,11 @@ class CounterController extends Controller
         ])->setStatusCode(201);
     }
 
-    public function get(int $idUser)
+    public function get(int $idCounter)
     {
-        $counter = Counter::where('user_id', $idUser)->first();
+        $counter = Counter::find($idCounter);
         return response()->json([
-            'status'=> 'OK',
+            'status' => 'OK',
             'data' => new CounterResource($counter),
             'error' => null
         ]);
@@ -42,17 +43,17 @@ class CounterController extends Controller
     {
         return response()->json([
             'status' => 'OK',
-            'data' => CounterResource::collection(Counter::all()),
+            'data' => CounterResource::collection(Counter::where('is_active', true)->get()),
             'error' => null
         ]);
     }
 
-    public function update(CounterCreateRequest $request, int $idUser, int $idCounter)
+    public function update(CounterCreateRequest $request, int $idCounter)
     {
         $counter = Counter::where('id', $idCounter)->first();
         $data = $request->validated();
         $counter->name = trim($data['name']);
-        $counter->user_id = $idUser;
+        $counter->fill($data);
         $counter->save();
         $counter = Counter::where('id', $idCounter)->first();
         return response()->json([
@@ -78,6 +79,27 @@ class CounterController extends Controller
         return response()->json([
             'status' => 'OK',
             'data' => null,
+            'error' => null
+        ]);
+    }
+
+    public function currentQueue()
+    {
+        $counters = Counter::all();
+        $queue = [];
+        foreach ($counters as $counter) {
+            $result = DB::table('counters')
+                ->join('services', 'counters.id', '=', 'services.counter_id')
+                ->join('queues', 'services.id', '=', 'queues.service_id')
+                ->select('counters.name', 'queues.number')
+                ->where('counters.id', '=', $counter->id)
+                ->orderBy('queues.number', 'desc')
+                ->first();
+            $queue[] = $result;
+        }
+        return response()->json([
+            'status' => 'OK',
+            'data' => $queue,
             'error' => null
         ]);
     }

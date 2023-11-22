@@ -111,8 +111,6 @@ class QueueSeeder extends Seeder
         $queue->service_id = $service4->id;
         $queue->status = 'skipped';
         $queue->save();
-        
-
     }
 
     public function checkNumber(int $idService): int

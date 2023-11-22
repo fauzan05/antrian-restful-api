@@ -2,13 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Counter;
+use App\Models\Service;
 use Closure;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CounterIsExist
+use function PHPUnit\Framework\isNull;
+
+class GetServiceById
 {
     /**
      * Handle an incoming request.
@@ -17,16 +19,16 @@ class CounterIsExist
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(!Counter::where('user_id', $request->idUser)->exists()){
+        $service = Service::find($request->idService) ?? null;
+        if(isNull($service)){
             throw new HttpResponseException(response()->json([
-                "status" => "Validation Error",
+                "status" => "Not Found",
                 "data" => null,
                 "error" => [
-                    "error_message" => 'counter is not found'
+                    "error_message" => 'Service is not found'
                 ]
             ], 404));
-        }else{
-            return $next($request);
         }
+        return $next($request);
     }
 }

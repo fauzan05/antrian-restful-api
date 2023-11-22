@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Counter extends Model
 {
+    // use SoftDeletes;
+
     protected $table = "counters";
     protected $primaryKey = "id";
     protected $keyType = "int";
@@ -16,7 +18,8 @@ class Counter extends Model
 
     protected $fillable = [
         'name',
-        'user_id'
+        'user_id',
+        'service_id'
     ];
 
     public function user(): BelongsTo
@@ -27,6 +30,7 @@ class Counter extends Model
 
     public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'counter_id' , 'id');
+        return $this->belongsTo(Service::class, 'service_id', 'id');
     }
+    
 }

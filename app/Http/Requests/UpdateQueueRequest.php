@@ -23,6 +23,7 @@ class UpdateQueueRequest extends FormRequest
     {
         return [
             "status" => ["required","string","min:1"],
+            "counter_id" => ["required","integer"],
         ];
     }
 }

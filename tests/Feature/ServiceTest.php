@@ -12,6 +12,7 @@ use Database\Seeders\ServiceSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Tests\TestCase;
 
 class ServiceTest extends TestCase
@@ -92,7 +93,7 @@ class ServiceTest extends TestCase
 
     public function testGetServiceById()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
+        $this->seed([UserSeeder::class, ServiceSeeder::class]);
         $service = Service::first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
@@ -115,7 +116,7 @@ class ServiceTest extends TestCase
 
     public function testGetServiceNonAdmin()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
+        $this->seed([UserSeeder::class, ServiceSeeder::class]);
         $service = Service::first();
         $admin = User::where('role', 'operator')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
@@ -135,7 +136,7 @@ class ServiceTest extends TestCase
 
     public function testGetAllService()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
+        $this->seed([UserSeeder::class, ServiceSeeder::class]);
         $admin = User::where('role', 'operator')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
         $this->get('/api/services', 
@@ -147,9 +148,8 @@ class ServiceTest extends TestCase
 
     public function testUpdatingService()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
+        $this->seed([UserSeeder::class, ServiceSeeder::class]);
         $serviceBefore = Service::first();
-        $counter = Counter::where('name', 'Loket 2')->first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
         $this->put('/api/services/'. $serviceBefore->id, 
@@ -157,7 +157,6 @@ class ServiceTest extends TestCase
             'name' => 'Layanan CS',
             'initial' => 'Z',
             'description' => 'Ini adalah layanan CS',
-            'counter_id' => $counter->id
         ],
         [
             'Accept' => 'application/json',
@@ -168,39 +167,11 @@ class ServiceTest extends TestCase
         self::assertNotEquals($serviceBefore->name, $serviceAfter->name);
         self::assertNotEquals($serviceBefore->description, $serviceAfter->description);
         self::assertNotEquals($serviceBefore->initial, $serviceAfter->initial);
-        self::assertNotEquals($serviceBefore->counter_id, $serviceAfter->counter_id);
-    }
-    
-    public function testUpdatingServiceCounterIdOnNull()
-    {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
-        $serviceBefore = Service::first();
-        $counter = 1;
-        // $counter = Counter::where('name', 'Loket 2')->first();
-        $admin = User::where('role', 'admin')->first();
-        $token = $admin->createToken('test-token')->plainTextToken;
-        $this->put('/api/services/'. $serviceBefore->id , 
-        [
-            'name' => 'Layanan CS',
-            'initial' => 'Z',
-            'description' => 'Ini adalah layanan CS',
-            // 'counter_id' => $counter->id
-        ],
-        [
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $token
-        ])->assertStatus(200);
-
-        $serviceAfter = Service::find($serviceBefore->id);
-        self::assertNotEquals($serviceBefore->name, $serviceAfter->name);
-        self::assertNotEquals($serviceBefore->description, $serviceAfter->description);
-        self::assertNotEquals($serviceBefore->initial, $serviceAfter->initial);
-        self::assertEquals($serviceBefore->counter_id, $serviceAfter->counter_id);
     }
 
     public function testDeleteServiceById()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
+        $this->seed([UserSeeder::class, ServiceSeeder::class]);
         $service = Service::first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
@@ -214,7 +185,7 @@ class ServiceTest extends TestCase
 
     public function testDestroy()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class, ServiceSeeder::class]);
+        $this->seed([UserSeeder::class, ServiceSeeder::class]);
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
         $this->delete('/api/services', headers:
@@ -231,6 +202,17 @@ class ServiceTest extends TestCase
         $invID = str_pad($id, 4, '0', STR_PAD_LEFT);
         // var_dump($invID);
         self::assertTrue(true);
+    }
+
+    public function testServiceToCounter()
+    {
+        $this->seed([UserSeeder::class, ServiceSeeder::class, CounterSeeder::class]);
+        // $service = Service::first();
+        // Log::info(json_encode($service->counter[0]->id, JSON_PRETTY_PRINT));
+        $counter = Counter::first();
+        Log::info(json_encode($counter->service->id, JSON_PRETTY_PRINT));
+        self::assertTrue(True);
+
     }
 
 }

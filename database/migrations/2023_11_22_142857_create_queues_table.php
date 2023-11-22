@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('number')->nullable(false);
             $table->unsignedBigInteger('service_id')->nullable(false);
+            $table->unsignedBigInteger('counter_id')->nullable();
             $table->enum('status', ['called','waiting', 'skipped'])->default('waiting')->nullable(false);
             $table->timestamps();
             $table->foreign('service_id')->references('id')->on('services');
+            $table->foreign('counter_id')->references('id')->on('counters');
         });
     }
 

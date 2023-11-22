@@ -3,24 +3,27 @@
 namespace Tests\Feature;
 
 use App\Models\Counter;
+use App\Models\Service;
 use App\Models\User;
 use Database\Seeders\CounterSeeder;
 use Database\Seeders\UserSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Database\Seeders\NewServiceSeeder;
 use Tests\TestCase;
 
 class CounterTest extends TestCase
 {
     public function testCreateCounter()
     {
-        $this->seed([UserSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class]);
         $user = User::where('username', 'fauzan123')->first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
-        $this->post('/api/users/'. $user->id .'/counters', 
+        $service = Service::where('initial', 'A')->first();
+        $this->post('/api/counters', 
         [
             'name' => 'Loket 1',
+            'user_id' => $user->id,
+            'service_id' => null
         ],
         [
             'Accept' => 'application/json',
@@ -30,15 +33,16 @@ class CounterTest extends TestCase
 
     public function testCreateCounterFailed()
     {
-        $this->seed([UserSeeder::class]);
-        $user1 = User::where('username', 'fauzan123')->first();
-        $user2 = User::where('username', 'susi123')->first();
+        $this->seed([UserSeeder::class, NewServiceSeeder::class]);
+        $user = User::where('username', 'fauzan123')->first();
         $admin = User::where('role', 'operator')->first();
+        $service = Service::where('initial', 'A')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
-        $this->post('/api/users/'. $user1->id .'/counters', 
+        $this->post('/api/counters', 
         [
             'name' => 'Loket 1',
-            'user_id' => $user1->id
+            'user_id' => $user->id,
+            'service_id' => $service->id
         ],
         [
             'Accept' => 'application/json',
@@ -51,10 +55,13 @@ class CounterTest extends TestCase
                     "error_message" => "Access Denied! this action must be admin role"
                 ]
             ]);
-        $this->post('/api/users/'. $user2->id .'/counters', 
+        $user = User::where('username', 'susi123')->first();
+        $service = Service::where('initial', 'B')->first();
+        $this->post('/api/counters', 
         [
             'name' => 'Loket 1',
-            'user_id' => $user2->id
+            'user_id' => $user->id,
+            'service_id' => $service->id
         ],
         [
             'Accept' => 'application/json',
@@ -71,11 +78,11 @@ class CounterTest extends TestCase
     
     public function testGetCounterById()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $user = User::where("username", "fauzan123")->first();
-        $loket = Counter::where('name', 'Loket 1')->first();
+        $counter = Counter::where('name', 'Loket 1')->first();
         $token = $user->createToken('test-token')->plainTextToken;
-        $this->get('/api/users/'. $user->id .'/counters/' . $loket->id, 
+        $this->get('/api/counters/' . $counter->id, 
         [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
@@ -83,7 +90,7 @@ class CounterTest extends TestCase
             ->assertJson([
                 'status' => 'OK',
                 'data' => [
-                    'id' => $loket->id,
+                    'id' => $counter->id,
                     'name'=> 'Loket 1',
                     'operator' => [
                         'name' => 'Fauzan'
@@ -95,17 +102,17 @@ class CounterTest extends TestCase
 
     public function testGetFailed()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $user = User::where("username", "fauzan123")->first();
-        $loket = Counter::where('name', 'Loket 1')->first();
+        $counter = Counter::where('name', 'Loket 1')->first();
         $token = $user->createToken('test-token')->plainTextToken;
-        $this->get('/api/users/'. $user->id+10 .'/counters/' . $loket->id + 10, 
+        $this->get('/api/counters/' . $counter->id + 10, 
         [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
         ])->assertStatus(404)
             ->assertJson([
-                "status" => "Validation Error",
+                "status" => "Not Found",
                 "data" => null,
                 "error" => [
                     "error_message" => 'counter is not found'
@@ -132,7 +139,7 @@ class CounterTest extends TestCase
 
     public function testGetAllCounter()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $user = User::where('username', 'fauzan123')->first();
         $counter = Counter::all();
         $token = $user->createToken('test-token')->plainTextToken;
@@ -173,14 +180,17 @@ class CounterTest extends TestCase
 
     public function testUpdateCounter()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $counter1 = Counter::where('name', 'Loket 3')->first();
+        $service = Service::where('initial', 'A')->first();
         $user = User::where('username', 'fauzan123')->first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
-        $this->put('/api/users/'. $user->id .'/counters/' . $counter1->id, 
+        $this->put('/api/counters/' . $counter1->id, 
         [
-            'name' => 'Loket CS'
+            'name' => 'Loket CS',
+            'user_id' => $user->id,
+            'service_id' => $service->id
         ],
         [
             'Accept' => 'application/json',
@@ -193,7 +203,7 @@ class CounterTest extends TestCase
 
     public function testDeleteById()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $counter = Counter::where('name','Loket 1')->first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
@@ -207,7 +217,7 @@ class CounterTest extends TestCase
 
     public function testDestroy()
     {
-        $this->seed([UserSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
         $this->delete('/api/counters', headers: 

@@ -26,9 +26,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/users/register', [AuthController::class,'register'])
 ->middleware('username');
-Route::post('/users/login', [AuthController::class,'login']);
+Route::post('/users/login', [AuthController::class,'login'])->middleware('userValidation');
+// harus login
 Route::group(['middleware' => ['auth:sanctum']], function() {
-    Route::get('/users', [AuthController::class,'show'])->middleware('isAdmin');
     Route::get('/users/current', [AuthController::class,'get']);
     Route::put('/users/update', [AuthController::class,'update']);
     Route::delete('/users/logout', [AuthController::class,'logout']);
@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     ->middleware('isAdmin');
     
     Route::middleware('isAdmin')->group(function() {
+        Route::get('/users', [AuthController::class,'show']);
         Route::post('/services', [ServiceController::class,'create'])->middleware('initialIsExist');
         Route::put('/services/{idService}', [ServiceController::class,'update'])
         ->where('idService', '[0-9]+');
@@ -44,30 +45,37 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
         ->where('idService', '[0-9]+');
         Route::delete('/services', [ServiceController::class,'destroy']);
         Route::get('/services/{idService}', [ServiceController::class,'get'])
-        ->where('idService', '[0-9]+');
+        ->where('idService', '[0-9]+')
+        ->middleware('getServiceById');
 
-        Route::post('/users/{idUser}/counters', [CounterController::class,'create']);
-        Route::put('/users/{idUser}/counters/{idCounter}', [CounterController::class,'update'])
-        ->where('idCounter', '[0-9]+')->where('idUser', '[0-9]+');
+        Route::post('/counters', [CounterController::class,'create']);
+        Route::put('/counters/{idCounter}', [CounterController::class,'update'])
+        ->where('idCounter', '[0-9]+')
+        ->middleware('getCounterById');
         Route::delete('/counters/{idCounter}', [CounterController::class,'delete'])
-        ->where('idCounter', '[0-9]+');
+        ->where('idCounter', '[0-9]+')
+        ->middleware('getCounterById');
         Route::delete('/counters', [CounterController::class,'destroy']);
     });
     Route::get('/services', [ServiceController::class,'show']);
-    Route::get('/users/{idUser}/counters', [CounterController::class,'get'])
-    ->where('idCounter', '[0-9]+')->where('idUser', '[0-9]+')
-    ->middleware('counterIsExist');
+    Route::get('/counters/{idCounter}', [CounterController::class,'get'])
+    ->where('idCounter', '[0-9]+')
+    ->middleware('getCounterById');
     Route::get('/counters', [CounterController::class,'show']);
 });
 
     Route::post('/queues', [QueueController::class, 'create']);
     Route::get('/queues', [QueueController::class, 'show']);
     Route::get('/queues/{idQueue}', [QueueController::class, 'get'])
-    ->where('idQueue', '[0-9]+')->middleware('queueIsExist');
-    Route::get('/services/{idService}/queue-count', [QueueController::class, 'count'])
-    ->where('idService', '[0-9]+')->middleware('currentQueue');
+    ->where('idQueue', '[0-9]+')->middleware('getQueueById');
+    Route::get('/queues/counters/{idCounter}', [QueueController::class, 'showQueueByCounter'])
+    ->where('idCounter', '[0-9]+')->middleware('getCounterById');
+    Route::get('/queues/services/{idService}/queue-count', [QueueController::class, 'currentByService'])
+    ->where('idService', '[0-9]+')->middleware('getQueueByService');
+    Route::get('/queues/counters/{idCounter}/queue-count', [QueueController::class, 'currentByCounter'])
+    ->where('idCounter', '[0-9]+')->middleware('getQueueByCounter');
     Route::put('/queues/{idQueue}', [QueueController::class, 'update'])
-    ->where('idQueue', '[0-9]+')->middleware('queueIsExist');
+    ->where('idQueue', '[0-9]+')->middleware('getQueueById');
     Route::delete('/queues', [QueueController::class,'destroy']);
     Route::get('/counters/current-queue', [CounterController::class, 'currentQueue']);
     Route::get('/files', [FileController::class, 'index'])->middleware('checkFiles');

@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CurrentQueue
+class GetQueueByService
 {
     /**
      * Handle an incoming request.

@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('initial')->nullable(false)->unique();
-            $table->string('name', 100)->nullable(false);
+            $table->string('name', 100)->nullable(false)->unique();
             $table->text('description')->nullable();
-            $table->unsignedBigInteger('counter_id')->nullable();
             $table->timestamps();
-            $table->foreign('counter_id')->references('id')->on('counters');
+
         });
     }
 

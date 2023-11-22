@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('counters', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable(false);
-            $table->unsignedBigInteger('user_id')->nullable(false);
+            $table->string('name')->nullable(false)->unique();
+            $table->unsignedBigInteger('user_id')->nullable(false)->unique();
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->boolean('is_active')->nullable(false)->default(true);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 

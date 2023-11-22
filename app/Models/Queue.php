@@ -19,7 +19,8 @@ class Queue extends Model
 
     protected $fillable = [
         'status',
-        'service_id'
+        'service_id',
+        'counter_id'
     ];
 
     public function service(): BelongsTo
@@ -27,17 +28,4 @@ class Queue extends Model
         return $this->belongsTo(Service::class, 'service_id','id');
 
     }
-
-    public function counter(): HasManyThrough
-    {
-        return $this->hasManyThrough(
-            Counter::class,
-            Service::class,
-            'id', // Foreign key di model Service
-            'id', // Foreign key di model Counter
-            'service_id', // Local key di model Queue
-            'counter_id' // Local key di model Service
-        );
-    }
-
 }

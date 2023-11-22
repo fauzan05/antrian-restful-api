@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
+    use SoftDeletes;
     protected $table = "services";
     protected $primaryKey = "id";
     protected $keyType = "int";
@@ -26,7 +28,7 @@ class Service extends Model
 
     public function counter(): HasMany
     {
-        return $this->hasMany(Counter::class, 'user_id', 'id');
+        return $this->hasMany(Counter::class, 'service_id', 'id');
     }
 
     public function queue(): HasMany

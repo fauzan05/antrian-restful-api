@@ -8,6 +8,7 @@ use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\Counter;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -38,17 +39,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $user = User::where('username', trim($data['username']))->first();
-        if(!$user || !Hash::check($data['password'], $user->password)) {
-            throw new HttpResponseException(response()->json([
-                "status" => "Validation Error",
-                'data' => null,
-                'error' => [
-                    "error_message" => "username or password is wrong"
-                ]
-            ], 401));
-        }
         $success['token'] = $user->createToken('token-login')->plainTextToken;
-
         return response()->json([
             "status" => "OK",
             'data' => new UserResource($user),
@@ -61,7 +52,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'status' => "OK",
-            new UserCollection(User::where('role', 'operator')->get()),
+            'data' => UserResource::collection(User::where('role', 'operator')->get()),
             'error' => null
         ]);
     }
@@ -90,7 +81,9 @@ class AuthController extends Controller
 
     public function delete(int $id): JsonResponse
     {
-        $user = User::where('id', $id)->where('role', 'operator')->delete();
+        // menghapus user berarti menghapus counter juga
+        Counter::where('user_id', $id)->delete();
+        User::where('id', $id)->where('role', 'operator')->delete();
         return response()->json([
             'status' => "OK",
             'data' => null,

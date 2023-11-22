@@ -14,13 +14,11 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
-        $counter = Counter::first();
         for( $i = 0; $i < 4; $i++ ) {
         $service = new Service();
         $service->name = "Layanan " . $i +1;
         $service->initial = strtoupper(chr(65+$i));
         $service->description = "Ini adalah layanan " . $i+1;
-        $service->counter_id = $counter->id;
         $service->save();
         }
     }

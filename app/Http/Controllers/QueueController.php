@@ -4,19 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\QueueCreateRequest;
 use App\Http\Requests\UpdateQueueRequest;
-use App\Http\Resources\CounterResource;
-use App\Http\Resources\CounterSimpleResource;
 use App\Http\Resources\QueueResource;
 use App\Models\Counter;
 use App\Models\Queue;
 use App\Models\Service;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Http\File;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class QueueController extends Controller
 {
@@ -33,9 +26,7 @@ class QueueController extends Controller
         $queue->save();
         return response()->json([
             'status' => "OK",
-            'data' => [
-                new QueueResource($queue)
-            ],
+            'data' => new QueueResource($queue),
             'error' => 'null'
         ])->setStatusCode(201);   
     }
@@ -43,14 +34,10 @@ class QueueController extends Controller
     public function get(int $id)
     {
         $queue = Queue::where('id', $id)->first();
-        
-        $counter = Counter::where('id', $queue->service['counter_id'])->first();
         return response()->json([
             'status' => 'OK',
             'data' => 
                 new QueueResource($queue),
-                new CounterResource($counter)
-            ,
             'error' => null
         ]);
     }
@@ -64,12 +51,28 @@ class QueueController extends Controller
         ]);
     }
 
+    public function showQueueByCounter(int $idCounter)
+    {
+        $currentQueue = DB::table('services')
+        ->join('queues', 'services.id', '=', 'queues.service_id')
+        ->join('counters', 'counters.service_id', '=', 'services.id')
+        ->select('queues.number', DB::raw('services.name as service_name'), 'queues.status', DB::raw('counters.name as counters_name'))
+        ->where('counters.id', $idCounter)->orderBy('number')->get();
+
+        return response()->json([
+            'status' => 'OK',
+            'data' => $currentQueue,
+            'error' => null
+        ]);
+    }
+
     public function update(int $idQueue, UpdateQueueRequest $request)
     {
         $data = $request->validated();
         $queue = Queue::where("id", $idQueue)
         ->whereDate("created_at", Carbon::today())->update([
-            'status' => $data['status']
+            'status' => $data['status'],
+            'counter_id' => $data['counter_id']
         ]);
         $queue = Queue::where("id", $idQueue)
         ->whereDate("created_at", Carbon::today())->get();
@@ -80,13 +83,25 @@ class QueueController extends Controller
         ]);
     }
 
-    public function count(int $idService)
+    public function currentByService(int $idService)
     {
         $queue = Queue::where('service_id', $idService)->whereIn('status', ['called', 'skipped'])
-        ->whereDate('created_at', Carbon::today())->orderByDesc('number')->get()->all();
+        ->whereDate('created_at', Carbon::today())->orderByDesc('number')->first();
         return response()->json([
             'status' => 'OK',
-            'data' => new QueueResource($queue[0]),
+            'data' => new QueueResource($queue),
+            'error' => null
+        ]);
+    }
+
+    public function currentByCounter(int $idCounter)
+    {
+        $counter = Counter::find($idCounter);
+        $queue = Queue::where('service_id', $counter->service->id)->whereIn('status', ['called', 'skipped'])
+        ->whereDate('created_at', Carbon::today())->orderByDesc('number')->first();
+        return response()->json([
+            'status' => 'OK',
+            'data' => new QueueResource($queue),
             'error' => null
         ]);
     }

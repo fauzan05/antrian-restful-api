@@ -12,10 +12,26 @@ select * from password_reset_tokens;
 select * from counters;
 select * from failed_jobs;
 select * from queues;
+delete from counters where is_active = 1;
+delete from queues where service_id = 887;
+
+select counters.name, services.name from counters inner join services on counters.id = services.counter_id;
 
 delete from migrations where id = 23;
 drop table services;
+drop table counters;
+drop table queues;
+drop table users;
 drop table failed_jobs;
 drop table migrations;
+drop table password_reset_tokens;
+drop table personal_access_tokens;
 
+select counters.name, queues.number from ((counters inner join services on counters.id = services.counter_id)
+inner join queues on services.id = queues.service_id ) where counters.id = 810 order by number desc limit 1;
+
+select queues.number, services.name as service_name, queues.status, counters.name as counters_name from ((services
+inner join queues on services.id = queues.service_id)
+inner join counters on counters.service_id = services.id)
+where counters.name = 'Loket 1' order by number;
 
