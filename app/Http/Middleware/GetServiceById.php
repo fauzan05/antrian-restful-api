@@ -20,7 +20,7 @@ class GetServiceById
     public function handle(Request $request, Closure $next): Response
     {
         $service = Service::find($request->idService) ?? null;
-        if(isNull($service)){
+        if(!$service){
             throw new HttpResponseException(response()->json([
                 "status" => "Not Found",
                 "data" => null,

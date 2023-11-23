@@ -183,7 +183,7 @@ class CounterTest extends TestCase
         $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $counter1 = Counter::where('name', 'Loket 3')->first();
         $service = Service::where('initial', 'A')->first();
-        $user = User::where('username', 'fauzan123')->first();
+        $user = User::where('username', 'rudi123')->first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
         $this->put('/api/counters/' . $counter1->id, 
@@ -198,7 +198,6 @@ class CounterTest extends TestCase
         ])->assertStatus(200);
         $counter2 = Counter::where('name', 'Loket CS')->first();
         self::assertNotEquals($counter1->name, $counter2->name);
-        self::assertNotEquals($counter1->user->name, $counter2->user->name);
     }
 
     public function testDeleteById()

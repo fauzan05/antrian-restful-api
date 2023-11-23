@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\CheckAudioFiles;
 use App\Http\Middleware\CounterIsExist;
+use App\Http\Middleware\CounterServiceNotValid;
 use App\Http\Middleware\CounterValidation;
 use App\Http\Middleware\CurrentQueue;
 use App\Http\Middleware\EnsureUserHasAdminRole;
@@ -87,6 +88,7 @@ class Kernel extends HttpKernel
         'getQueueByService' => GetQueueByService::class,
         'getQueueByCounter' => GetQueueByCounter::class,
         'getServiceById' => GetServiceById::class,
-        'userValidation' => UserValidation::class
+        'userValidation' => UserValidation::class,
+        'counterServiceNotValid' => CounterServiceNotValid::class
     ];
 }

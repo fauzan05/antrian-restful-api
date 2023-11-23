@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Database\Seeders\CounterSeeder;
+use Database\Seeders\NewQueueSeeder;
 use Database\Seeders\NewServiceSeeder;
 use Database\Seeders\QueueSeeder;
 use Database\Seeders\ServiceSeeder;
@@ -45,12 +46,10 @@ class QueueTest extends TestCase
 
     public function testGetByIdNotFound()
     {
-        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
-        $service = Service::where('name', 'Layanan Poli Gizi')->first();
-        $response = $this->post('/api/queues', [
-            'service_id' => $service->id,
-        ])->assertStatus(201);
-        $response = $this->get('/api/queues/'. $response['data'][0]['id']+10)
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class,
+        QueueSeeder::class]);
+        $queue = Queue::first();
+        $response = $this->get('/api/queues/'. $queue->id + 10000)
         ->assertStatus(404);
         Log::info(json_encode($response, JSON_PRETTY_PRINT));
     }
@@ -67,12 +66,19 @@ class QueueTest extends TestCase
     public function testUpdate()
     {
         $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class,
-        QueueSeeder::class]);
+        NewQueueSeeder::class]);
+        $user = User::where('role', 'operator')->first();
+        $token = $user->createToken('test-token')->plainTextToken;
         $queue1 = Queue::first();
-        $counter = Counter::first();
-        $this->put('/api/queues/' . $queue1->id, [
+        $counter = Counter::where('name', 'Loket 1')->first();
+        $this->put('/api/queues/' . $queue1->id, 
+        [
             'status' => 'called',
             'counter_id' => $counter->id
+        ], 
+        [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token 
         ])->assertStatus(200);
         $queue2 = Queue::first();
         self::assertNotEquals($queue1->status, $queue2->status);
@@ -83,7 +89,7 @@ class QueueTest extends TestCase
         $this->seed([UserSeeder::class, NewServiceSeeder::class,
         CounterSeeder::class, QueueSeeder::class]);
         $service = Service::where('initial', strtoupper(chr(66)))->first();
-        $response = $this->get('/api/queues/services/' . $service->id . '/queue-count')
+        $response = $this->get('/api/queues/services/' . $service->id . '/current')
             ->assertStatus(200);
         Log::info(json_encode($response, JSON_PRETTY_PRINT));
 
@@ -92,18 +98,10 @@ class QueueTest extends TestCase
     public function testDelete()
     {
         $this->seed([UserSeeder::class, NewServiceSeeder::class,
-        CounterSeeder::class, QueueSeeder::class]);
+        CounterSeeder::class, NewQueueSeeder::class]);
         $this->delete('/api/queues')
         ->assertStatus(200);
         self::assertNull(Queue::first());
     }
-
-    
-
-
-
-
-
-    
 
 }

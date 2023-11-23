@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class QueueCreateRequest extends FormRequest
 {
@@ -24,5 +25,15 @@ class QueueCreateRequest extends FormRequest
         return [
             'service_id' => ['required','integer'],
         ];
+    }
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(response([
+            'status' => 'Validation Error',
+            'data' => null,
+            'error' => [
+                'error_message' => $validator->getMessageBag()
+            ]    
+        ], 400));
     }
 }

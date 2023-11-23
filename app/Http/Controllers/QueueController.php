@@ -56,7 +56,8 @@ class QueueController extends Controller
         $currentQueue = DB::table('services')
         ->join('queues', 'services.id', '=', 'queues.service_id')
         ->join('counters', 'counters.service_id', '=', 'services.id')
-        ->select('queues.number', DB::raw('services.name as service_name'), 'queues.status', DB::raw('counters.name as counters_name'))
+        ->select('queues.number', DB::raw('services.name as service_name'),
+        'queues.status', DB::raw('counters.name as counters_name'))
         ->where('counters.id', $idCounter)->orderBy('number')->get();
 
         return response()->json([

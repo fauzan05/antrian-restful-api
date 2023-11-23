@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Http\Resources\UserCollection;
 use App\Models\User;
+use Database\Seeders\CounterSeeder;
 use Database\Seeders\ManyUserSeeder;
+use Database\Seeders\NewServiceSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -74,12 +76,12 @@ class UserTest extends TestCase
 
     public function testLogin()
     {
-        $this->seed([UserSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $user = User::where('username', 'fauzan123')->first();
         $response = $this->post('/api/users/login', [
             'username' => 'fauzan123',
             'password' => 'rahasia'
-        ]);
+    ]);
         $user->createToken('test-token')->plainTextToken;
         $response->assertStatus(200);
         $response->assertJson([

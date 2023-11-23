@@ -7,6 +7,7 @@ use App\Models\Queue;
 use App\Models\Service;
 use App\Models\User;
 use Database\Seeders\CounterSeeder;
+use Database\Seeders\NewServiceSeeder;
 use Database\Seeders\ServiceSeed;
 use Database\Seeders\ServiceSeeder;
 use Database\Seeders\UserSeeder;

@@ -83,16 +83,17 @@ class CounterController extends Controller
         ]);
     }
 
-    public function currentQueue()
+    public function currentQueueByCounter()
     {
         $counters = Counter::all();
         $queue = [];
         foreach ($counters as $counter) {
             $result = DB::table('counters')
-                ->join('services', 'counters.id', '=', 'services.counter_id')
+                ->join('services', 'counters.service_id', '=', 'services.id')
                 ->join('queues', 'services.id', '=', 'queues.service_id')
                 ->select('counters.name', 'queues.number')
                 ->where('counters.id', '=', $counter->id)
+                ->whereIn('queues.status', ['called', 'skipped'])
                 ->orderBy('queues.number', 'desc')
                 ->first();
             $queue[] = $result;
