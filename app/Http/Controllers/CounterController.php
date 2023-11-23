@@ -6,6 +6,7 @@ use App\Http\Requests\CounterCreateRequest;
 use App\Http\Requests\CounterUpdateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\CounterResource;
+use App\Http\Resources\CurrentQueueResource;
 use App\Http\Resources\UserCollection;
 use App\Models\Counter;
 use App\Models\Queue;
@@ -100,7 +101,7 @@ class CounterController extends Controller
         }
         return response()->json([
             'status' => 'OK',
-            'data' => $queue,
+            'data' => new CurrentQueueResource($queue),
             'error' => null
         ]);
     }
