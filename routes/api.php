@@ -65,7 +65,6 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/counters', [CounterController::class,'show']);
     Route::put('/queues/{idQueue}', [QueueController::class, 'update'])
     ->where('idQueue', '[0-9]+')->middleware(['getQueueById','counterServiceNotValid']);
-    
 });
 
     Route::post('/queues', [QueueController::class, 'create']);
@@ -74,10 +73,13 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     ->where('idQueue', '[0-9]+')->middleware('getQueueById');
     Route::get('/queues/counters/{idCounter}', [QueueController::class, 'showQueueByCounter'])
     ->where('idCounter', '[0-9]+')->middleware('getCounterById');
+    Route::get('/queues/users/{idUser}', [QueueController::class, 'showQueueByUser'])
+    ->where('idUser', '[0-9]+')->middleware('getQueueByUser');
     Route::get('/queues/services/{idService}/current', [QueueController::class, 'currentByService'])
     ->where('idService', '[0-9]+')->middleware('getQueueByService');
     Route::get('/queues/counters/{idCounter}/current', [QueueController::class, 'currentByCounter'])
     ->where('idCounter', '[0-9]+')->middleware('getQueueByCounter');
+    
     Route::delete('/queues', [QueueController::class,'destroy']);
     Route::get('/counters/current-queue', [CounterController::class, 'currentQueueByCounter']);
     Route::get('/files', [FileController::class, 'index'])->middleware('checkFiles');

@@ -67,6 +67,21 @@ class QueueController extends Controller
         ]);
     }
 
+    public function showQueueByUser(int $idUser)
+    {
+        $currentQueue = DB::table('services')
+        ->join('queues', 'services.id', '=', 'queues.service_id')
+        ->join('counters', 'counters.service_id', '=', 'services.id')
+        ->select('queues.number', DB::raw('services.name as service_name'),
+        'queues.status', DB::raw('counters.name as counters_name'))
+        ->where('counters.user_id', $idUser)->orderBy('number')->get();
+        return response()->json([
+            'status' => 'OK',
+            'data' => $currentQueue,
+            'error' => null
+        ]);
+    }
+
     public function update(int $idQueue, UpdateQueueRequest $request)
     {
         $data = $request->validated();
@@ -106,7 +121,6 @@ class QueueController extends Controller
             'error' => null
         ]);
     }
-
 
     public function destroy()
     {

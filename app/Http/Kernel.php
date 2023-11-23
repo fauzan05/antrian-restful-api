@@ -11,6 +11,7 @@ use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Http\Middleware\GetCounterById;
 use App\Http\Middleware\GetQueueByCounter;
 use App\Http\Middleware\GetQueueByService;
+use App\Http\Middleware\GetQueueByUser;
 use App\Http\Middleware\GetServiceById;
 use App\Http\Middleware\HasCounter;
 use App\Http\Middleware\InitialServiceValidation;
@@ -87,6 +88,7 @@ class Kernel extends HttpKernel
         'checkFiles' => CheckAudioFiles::class,
         'getQueueByService' => GetQueueByService::class,
         'getQueueByCounter' => GetQueueByCounter::class,
+        'getQueueByUser' => GetQueueByUser::class,
         'getServiceById' => GetServiceById::class,
         'userValidation' => UserValidation::class,
         'counterServiceNotValid' => CounterServiceNotValid::class
