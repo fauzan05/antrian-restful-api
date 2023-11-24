@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\QueueCreateRequest;
 use App\Http\Requests\UpdateQueueRequest;
 use App\Http\Resources\QueueResource;
+use App\Http\Resources\ShowQueueResource;
 use App\Models\Counter;
 use App\Models\Queue;
 use App\Models\Service;
@@ -62,7 +63,7 @@ class QueueController extends Controller
 
         return response()->json([
             'status' => 'OK',
-            'data' => $currentQueue,
+            'data' => new ShowQueueResource($currentQueue),
             'error' => null
         ]);
     }
@@ -77,7 +78,7 @@ class QueueController extends Controller
         ->where('counters.user_id', $idUser)->orderBy('number')->get();
         return response()->json([
             'status' => 'OK',
-            'data' => $currentQueue,
+            'data' => new ShowQueueResource($currentQueue),
             'error' => null
         ]);
     }
