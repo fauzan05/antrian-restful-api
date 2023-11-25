@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/users/register', [AuthController::class,'register'])
 ->middleware('username');
-Route::post('/users/login', [AuthController::class,'login'])->middleware('userValidation');
+Route::post('/users/login', [AuthController::class,'login'])->middleware(['userValidation', 'userCounterValidation']);
 // harus login
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/users/current', [AuthController::class,'get']);
@@ -65,6 +65,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/counters', [CounterController::class,'show']);
     Route::put('/queues/{idQueue}', [QueueController::class, 'update'])
     ->where('idQueue', '[0-9]+')->middleware(['getQueueById','counterServiceNotValid']);
+    Route::get('/counters/users/{idUser}', [CounterController::class, 'currentCounterByUser'])
+    ->where('idUser', '[0-9]+')->middleware('userCounterValidation');
 });
 
     Route::post('/queues', [QueueController::class, 'create']);

@@ -113,4 +113,14 @@ class CounterController extends Controller
             'error' => null
         ]);
     }
+
+    public function currentCounterByUser(int $idUser)
+    {   
+        $counter = Counter::where('user_id', $idUser)->first();
+        return response()->json([
+            'status' => 'OK',
+            'data' => new CounterResource($counter),
+            'error' => null
+        ]);
+    }
 }
