@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/users/register', [AuthController::class,'register'])
 ->middleware('username');
-Route::post('/users/login', [AuthController::class,'login'])->middleware(['userValidation', 'userCounterValidation']);
+Route::post('/users/login', [AuthController::class,'login'])->middleware(['userValidation']);
 // harus login
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/users/current', [AuthController::class,'get']);
