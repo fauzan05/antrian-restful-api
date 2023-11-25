@@ -7,6 +7,7 @@ use App\Http\Middleware\CounterIsExist;
 use App\Http\Middleware\CounterServiceNotValid;
 use App\Http\Middleware\CounterValidation;
 use App\Http\Middleware\CurrentQueue;
+use App\Http\Middleware\CurrentQueueIsNull;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Http\Middleware\GetCounterById;
 use App\Http\Middleware\GetQueueByCounter;
@@ -91,6 +92,6 @@ class Kernel extends HttpKernel
         'getQueueByUser' => GetQueueByUser::class,
         'getServiceById' => GetServiceById::class,
         'userValidation' => UserValidation::class,
-        'counterServiceNotValid' => CounterServiceNotValid::class
+        'counterServiceNotValid' => CounterServiceNotValid::class,
     ];
 }

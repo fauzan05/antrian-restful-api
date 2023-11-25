@@ -123,6 +123,11 @@ class QueueController extends Controller
         ]);
     }
 
+    public function queuesRemain()
+    {
+        
+    }
+
     public function destroy()
     {
         DB::delete("delete from queues");

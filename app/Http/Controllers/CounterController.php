@@ -97,7 +97,15 @@ class CounterController extends Controller
                 ->whereIn('queues.status', ['called', 'skipped'])
                 ->orderBy('queues.number', 'desc')
                 ->first();
-            $queue[] = $result;
+                if($result == null)
+                {
+                    $queue[] = [
+                        'name' => $counter->name,
+                        'number' => 0
+                    ];
+                }else{
+                    $queue[] = $result;
+                }
         }
         return response()->json([
             'status' => 'OK',
