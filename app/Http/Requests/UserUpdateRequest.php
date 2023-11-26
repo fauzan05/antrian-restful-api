@@ -24,7 +24,9 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             'name' => ['nullable','string','min:3', 'max:50'],
-            'password' => ['nullable', 'string', 'min:3', 'max:50']
+            'old_password' => ['required', 'string', 'max:50'],
+            'new_password' => ['required', 'string', 'min:3', 'max:50'],
+            'new_password_confirmation' => ['required', 'string', 'same:new_password', 'max:50']
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

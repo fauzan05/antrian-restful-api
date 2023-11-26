@@ -70,6 +70,7 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $user = auth()->user();
+        $user->password = $data['new_password'];
         $user->fill($data);
         $user->save();
         return response()->json([

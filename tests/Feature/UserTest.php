@@ -22,13 +22,11 @@ class UserTest extends TestCase
             'name' => 'Fauzan',
             'username' => 'fauzan123',
             'password' => 'rahasia',
-        ]);
-        $user = User::where('name', 'Fauzan')->first();
-        $response->assertStatus(201);
-        $response->assertJson([
+            'password_confirmation' => 'rahasia'
+        ])->assertStatus(201)
+            ->assertJson([
             'status' => "OK",
             'data' => [
-                'id' => $user->id,
                 'name' => 'Fauzan',
                 'username' => 'fauzan123',
                 'role' => 'operator'
@@ -44,6 +42,7 @@ class UserTest extends TestCase
             'name' => 'Fauzan',
             'username' => 'fauzan123',
             'password' => 'rahasia',
+            'password_confirmation' => 'rahasia'
         ]);
         $response->assertStatus(409);
         $response->assertJson([
@@ -149,8 +148,10 @@ class UserTest extends TestCase
         $token = $user->createToken('test-token')->plainTextToken;
         $this->put('/api/users/update', 
         [
-            'name' => 'Rudi',
-            'password' => 'gatau'
+            'name' => 'Fauzan Nurhidayat',
+            'old_password' => 'rahasia',
+            'new_password' => 'fauzan123',
+            'new_password_confirmation' => 'fauzan123'
         ],
         [
             'Accept' => 'application/json',
@@ -160,7 +161,7 @@ class UserTest extends TestCase
                 "status" => "OK",
                 "data" => [
                     "id" => $user->id,
-                    "name" => "Rudi",
+                    "name" => "Fauzan Nurhidayat",
                     "username" => "fauzan123",
                     "role" => "operator"
                 ],

@@ -26,6 +26,7 @@ class UserRegisterRequest extends FormRequest
             'name' => ['required','string','min:3', 'max:50'],
             'username' => ['required','string','min:3', 'max:50'],
             'password' => ['required','string','min:3','max:50'],
+            'password_confirmation' => ['required', 'string', 'same:password']
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

@@ -18,6 +18,7 @@ use App\Http\Middleware\HasCounter;
 use App\Http\Middleware\InitialServiceValidation;
 use App\Http\Middleware\QueueIsExist;
 use App\Http\Middleware\RegisterValidation;
+use App\Http\Middleware\UpdateUsers;
 use App\Http\Middleware\UserCounterValidation;
 use App\Http\Middleware\UserValidation;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -94,6 +95,7 @@ class Kernel extends HttpKernel
         'getServiceById' => GetServiceById::class,
         'userValidation' => UserValidation::class,
         'counterServiceNotValid' => CounterServiceNotValid::class,
-        'userCounterValidation' => UserCounterValidation::class
+        'userCounterValidation' => UserCounterValidation::class,
+        'updateUsers' => UpdateUsers::class
     ];
 }

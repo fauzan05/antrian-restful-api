@@ -30,7 +30,8 @@ Route::post('/users/login', [AuthController::class,'login'])->middleware(['userV
 // harus login
 Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/users/current', [AuthController::class,'get']);
-    Route::put('/users/update', [AuthController::class,'update']);
+    Route::put('/users/update', [AuthController::class,'update'])
+    ->middleware('updateUsers');
     Route::delete('/users/logout', [AuthController::class,'logout']);
     Route::delete('/users/{idUser}', [AuthController::class,'delete'])
     ->where('idUser', '[0-9]+')
