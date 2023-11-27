@@ -88,11 +88,10 @@ class QueueTest extends TestCase
     {
         $this->seed([UserSeeder::class, NewServiceSeeder::class,
         CounterSeeder::class, QueueSeeder::class]);
-        $service = Service::where('initial', strtoupper(chr(66)))->first();
+        $service = Service::where('initial', strtoupper(chr(65)))->first();
         $response = $this->get('/api/queues/services/' . $service->id . '/current')
             ->assertStatus(200);
         Log::info(json_encode($response, JSON_PRETTY_PRINT));
-
     }
 
     public function testDelete()

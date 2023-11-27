@@ -73,7 +73,7 @@ class QueueController extends Controller
         $currentQueue = DB::table('services')
         ->join('queues', 'services.id', '=', 'queues.service_id')
         ->join('counters', 'counters.service_id', '=', 'services.id')
-        ->select('queues.number', DB::raw('services.name as service_name'),
+        ->select('queues.id','queues.number', DB::raw('services.name as service_name'),
         'queues.status', DB::raw('counters.name as counters_name'))
         ->where('counters.user_id', $idUser)->orderBy('number')->get();
         return response()->json([
@@ -89,7 +89,7 @@ class QueueController extends Controller
         $queue = Queue::where("id", $idQueue)
         ->whereDate("created_at", Carbon::today())->update([
             'status' => $data['status'],
-            'counter_id' => $data['counter_id']
+            'counter_id' => trim($data['counter_id'])
         ]);
         $queue = Queue::where("id", $idQueue)
         ->whereDate("created_at", Carbon::today())->get();
