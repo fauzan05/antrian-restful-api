@@ -11,10 +11,10 @@ select * from personal_access_tokens;
 select * from password_reset_tokens;
 select * from counters;
 select * from failed_jobs;
-select * from queues;
+select * from queues order by number asc;
 delete from counters where is_active = 1;
 delete from counters where user_id = 4;
-delete from queues where service_id = 887;
+delete from queues where service_id = 1;
 
 select counters.name, services.name from counters inner join services on counters.id = services.counter_id;
 
@@ -39,4 +39,5 @@ inner join counters on counters.service_id = services.id)
 where counters.name = 'Loket 1' order by number;
 
 select * from counters where id = 21 and service_id = 22;
-delete from queues where service_id = 2;
+delete from queues where service_id = 1;
+delete from queues where counter_id = 122;
