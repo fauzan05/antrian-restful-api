@@ -10,6 +10,7 @@ use App\Http\Resources\CurrentQueueResource;
 use App\Http\Resources\UserCollection;
 use App\Models\Counter;
 use App\Models\Queue;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -95,9 +96,10 @@ class CounterController extends Controller
                 ->select('counters.name', 'queues.number')
                 ->where('counters.id', '=', $counter->id)
                 ->whereIn('queues.status', ['called', 'skipped'])
+                ->whereDate('queues.created_at', Carbon::today())
                 ->orderBy('queues.number', 'desc')
                 ->first();
-                if($result == null)
+                if(!$result)
                 {
                     $queue[] = [
                         'name' => $counter->name,

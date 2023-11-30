@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\TestEvent;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\FileController;
@@ -86,6 +87,5 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/counters/current-queue', [CounterController::class, 'currentQueueByCounter']);
     Route::get('/files', [FileController::class, 'index'])->middleware('checkFiles');
     Route::get('/files/{nameFile}', [FileController::class, 'get'])->middleware('checkFiles');
-
 
     

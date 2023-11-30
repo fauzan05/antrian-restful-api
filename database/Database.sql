@@ -8,6 +8,8 @@ select * from migrations;
 select * from users;
 select * from services;
 select * from personal_access_tokens;
+select * from websockets_statistics_entries;
+drop table websockets_statistics_entries;
 select * from password_reset_tokens;
 select * from counters;
 select * from failed_jobs;

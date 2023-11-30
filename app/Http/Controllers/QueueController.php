@@ -18,18 +18,21 @@ class QueueController extends Controller
     {
         $data = $request->validated();
         $number = Queue::where('service_id', $data['service_id'])
-            ->whereDate('created_at', Carbon::today())->count();
+            ->whereDate('created_at', Carbon::today())
+            ->count();
         $service = Service::where('id', $data['service_id'])->first();
         $queue = new Queue();
         $queue->number = $service->initial . str_pad($number + 1, 3, '0', STR_PAD_LEFT);
         $queue->service_id = $data['service_id'];
         $queue->status = 'waiting';
         $queue->save();
-        return response()->json([
-            'status' => "OK",
-            'data' => new QueueResource($queue),
-            'error' => 'null'
-        ])->setStatusCode(201);
+        return response()
+            ->json([
+                'status' => 'OK',
+                'data' => new QueueResource($queue),
+                'error' => 'null',
+            ])
+            ->setStatusCode(201);
     }
 
     public function get(int $id)
@@ -37,9 +40,8 @@ class QueueController extends Controller
         $queue = Queue::where('id', $id)->first();
         return response()->json([
             'status' => 'OK',
-            'data' =>
-            new QueueResource($queue),
-            'error' => null
+            'data' => new QueueResource($queue),
+            'error' => null,
         ]);
     }
 
@@ -47,8 +49,8 @@ class QueueController extends Controller
     {
         return response()->json([
             'status' => 'OK',
-            'data' =>  QueueResource::collection(Queue::all()),
-            'error' => null
+            'data' => QueueResource::collection(Queue::all()),
+            'error' => null,
         ]);
     }
 
@@ -57,18 +59,15 @@ class QueueController extends Controller
         $currentQueue = DB::table('services')
             ->join('queues', 'services.id', '=', 'queues.service_id')
             ->join('counters', 'counters.service_id', '=', 'services.id')
-            ->select(
-                'queues.number',
-                DB::raw('services.name as service_name'),
-                'queues.status',
-                DB::raw('counters.name as counters_name')
-            )
-            ->where('counters.id', $idCounter)->orderBy('number')->get();
+            ->select('queues.number', DB::raw('services.name as service_name'), 'queues.status', DB::raw('counters.name as counters_name'))
+            ->where('counters.id', $idCounter)
+            ->orderBy('number')
+            ->get();
 
         return response()->json([
             'status' => 'OK',
             'data' => new ShowQueueResource($currentQueue),
-            'error' => null
+            'error' => null,
         ]);
     }
 
@@ -77,74 +76,80 @@ class QueueController extends Controller
         $currentQueue = DB::table('services')
             ->join('queues', 'services.id', '=', 'queues.service_id')
             ->join('counters', 'counters.service_id', '=', 'services.id')
-            ->select(
-                'queues.id',
-                'queues.number',
-                DB::raw('services.name as service_name'),
-                'queues.status',
-                DB::raw('counters.name as counters_name')
-            )
-            ->where('counters.user_id', $idUser)->whereDate('queues.created_at', Carbon::today())
-            ->orderBy('number')->get();
+            ->select('queues.id', 'queues.number', DB::raw('services.name as service_name'), 'queues.status', DB::raw('counters.name as counters_name'))
+            ->where('counters.user_id', $idUser)
+            ->whereDate('queues.created_at', Carbon::today())
+            ->orderBy('queues.number')
+            ->get() ?? null;
+        if ($currentQueue->isEmpty()) {
+            return response()->json([
+                'status' => 'OK',
+                'data' => [],
+                'error' => null,
+            ]);
+        }
         return response()->json([
             'status' => 'OK',
-            'data' => function($currentQueue){
-                if(!$currentQueue){
-                    return null;
-                }
-                return new QueueResource($currentQueue);
-            },
-            'error' => null
+            'data' => new ShowQueueResource($currentQueue),
+            'error' => null,
         ]);
     }
 
     public function update(int $idQueue, UpdateQueueRequest $request)
     {
         $data = $request->validated();
-        $queue = Queue::where("id", $idQueue)
-            ->whereDate("created_at", Carbon::today())->update([
+        $queue = Queue::where('id', $idQueue)
+            ->whereDate('created_at', Carbon::today())
+            ->update([
                 'status' => $data['status'],
-                'counter_id' => trim($data['counter_id'])
+                'counter_id' => trim($data['counter_id']),
             ]);
-        $queue = Queue::where("id", $idQueue)
-            ->whereDate("created_at", Carbon::today())->get();
+        $queue = Queue::where('id', $idQueue)
+            ->whereDate('created_at', Carbon::today())
+            ->get();
         return response()->json([
             'status' => 'OK',
             'data' => QueueResource::collection($queue),
-            'error' => null
+            'error' => null,
         ]);
     }
 
     public function currentByService(int $idService)
     {
-        $queue = Queue::where('service_id', $idService)->whereIn('status', ['called', 'skipped'])
-            ->whereDate('created_at', Carbon::today())->orderByDesc('number')->first();
+        $queue = Queue::where('service_id', $idService)
+            ->whereIn('status', ['called', 'skipped'])
+            ->whereDate('created_at', Carbon::today())
+            ->orderByDesc('number')
+            ->first();
         return response()->json([
             'status' => 'OK',
             'data' => new QueueResource($queue),
-            'error' => null
+            'error' => null,
         ]);
     }
 
     public function currentByCounter(int $idCounter)
     {
         $counter = Counter::find($idCounter);
-        $queue = Queue::where('service_id', $counter->service->id)->whereIn('status', ['called', 'skipped'])
-            ->whereDate('created_at', Carbon::today())->orderByDesc('number')->first();
+        $queue = Queue::where('service_id', $counter->service->id)
+            ->whereIn('status', ['called', 'skipped'])
+            ->whereDate('created_at', Carbon::today())
+            ->orderByDesc('number')
+            ->first();
         return response()->json([
             'status' => 'OK',
             'data' => new QueueResource($queue),
-            'error' => null
+            'error' => null,
         ]);
     }
 
     public function destroy()
     {
-        DB::delete("delete from queues");
+        DB::delete('delete from queues');
         return response()->json([
             'status' => 'OK',
             'data' => null,
-            'error' => null
+            'error' => null,
         ]);
     }
 }
