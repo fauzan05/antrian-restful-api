@@ -138,13 +138,7 @@ class ServiceTest extends TestCase
     public function testGetAllService()
     {
         $this->seed([UserSeeder::class, ServiceSeeder::class]);
-        $admin = User::where('role', 'operator')->first();
-        $token = $admin->createToken('test-token')->plainTextToken;
-        $this->get('/api/services', 
-        [
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $token
-        ])->assertStatus(200);
+        $this->get('/api/services')->assertStatus(200);
     }
 
     public function testUpdatingService()
