@@ -18,6 +18,9 @@ class QueueResource extends JsonResource
     {
         $host = "http://127.0.0.1:8000/api/files/";
         $number = str_split((string)$this->number);
+        $intval = $number;
+        array_shift($intval);
+        $intval = implode($intval);
         $counter = Counter::where('service_id', $this->service->id)->first();
         $counter = explode(" ", $counter->name);
         return [
@@ -30,9 +33,7 @@ class QueueResource extends JsonResource
                 $host . "opening",
                 $host . "nomor-antrian",
                 $host . $number[0],
-                $host . $number[1],
-                $host . $number[2],
-                $host . $number[3],
+                $host . intval($intval),
                 $host . "silahkan-menuju-loket",
                 $host . $counter[1],
             ]
