@@ -23,7 +23,7 @@ class QueueController extends Controller
         $service = Service::where('id', $data['service_id'])->first();
         $queue = new Queue();
         $queue->number = $service->initial . str_pad($number + 1, 3, '0', STR_PAD_LEFT);
-        $queue->service_id = $data['service_id'];
+        $queue->service_id = $data['service_id'];https://desktop.postman.com/?desktopVersion=10.20.0&userId=30392518&teamId=0
         $queue->status = 'waiting';
         $queue->save();
         return response()
@@ -98,12 +98,14 @@ class QueueController extends Controller
     public function update(int $idQueue, UpdateQueueRequest $request)
     {
         $data = $request->validated();
-        $queue = Queue::where('id', $idQueue)
+        DB::transaction(function() use (&$idQueue, &$data){
+            Queue::where('id', $idQueue)
             ->whereDate('created_at', Carbon::today())
             ->update([
                 'status' => $data['status'],
                 'counter_id' => trim($data['counter_id']),
             ]);
+        }, 5);
         $queue = Queue::where('id', $idQueue)
             ->whereDate('created_at', Carbon::today())
             ->get();

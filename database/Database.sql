@@ -1,6 +1,7 @@
 show databases;
 
 use antrian;
+create database antrian;
 
 show tables;
 show create table users;
