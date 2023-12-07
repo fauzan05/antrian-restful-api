@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\TestingEvents;
 use Illuminate\Support\Facades\Route;
 
 /*
