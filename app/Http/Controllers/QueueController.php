@@ -11,20 +11,29 @@ use App\Models\Queue;
 use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Validator;
 
 class QueueController extends Controller
 {
     public function create(QueueCreateRequest $request)
     {
         $data = $request->validated();
-        $number = Queue::where('service_id', $data['service_id'])
+        $registrationService = Service::where('role', 'registration')->first();
+        $registrationNumber = Queue::where('registration_service_id', $registrationService->id)
             ->whereDate('created_at', Carbon::today())
             ->count();
-        $service = Service::where('id', $data['service_id'])->first();
+        $polyService = Service::where('id', $data['poly_service_id'])->first();
+        $polyNumber = Queue::where('poly_service_id', $data['poly_service_id'])
+            ->whereDate('created_at', Carbon::today())
+            ->count();
         $queue = new Queue();
-        $queue->number = $service->initial . str_pad($number + 1, 3, '0', STR_PAD_LEFT);
-        $queue->service_id = $data['service_id'];
-        $queue->status = 'waiting';
+        $queue->registration_number = $registrationService->initial . str_pad($registrationNumber + 1, 3, '0', STR_PAD_LEFT);
+        $queue->poly_number = $polyService->initial . str_pad($polyNumber + 1, 3, '0', STR_PAD_LEFT);
+        $queue->registration_service_id = $registrationService->id;
+        $queue->poly_service_id = $polyService->id;
+        $queue->registration_status = 'waiting';
+        $queue->poly_status = 'waiting';
         $queue->save();
         return response()
             ->json([
@@ -56,13 +65,40 @@ class QueueController extends Controller
 
     public function showQueueByCounter(int $idCounter)
     {
-        $currentQueue = DB::table('services')
-            ->join('queues', 'services.id', '=', 'queues.service_id')
-            ->join('counters', 'counters.service_id', '=', 'services.id')
-            ->select('queues.number', DB::raw('services.name as service_name'), 'queues.status', DB::raw('counters.name as counters_name'))
+        $counterServiceRole = DB::table('counters')
+            ->join('services', 'services.id', '=', 'counters.service_id')
+            ->select('services.role')
             ->where('counters.id', $idCounter)
-            ->orderBy('number')
-            ->get();
+            ->first();
+        if ($counterServiceRole->role == 'registration') {
+            $currentQueue = DB::table('services')
+                ->join('queues', 'services.id', '=', 'queues.registration_service_id')
+                ->join('counters', 'counters.service_id', '=', 'services.id')
+                ->select(
+                    'queues.registration_number',
+                    DB::raw('services.name as service_name'),
+                    'queues.registration_status',
+                    DB::raw('counters.name as counters_name')
+                )
+                ->where('counters.id', $idCounter)
+                ->orderBy('registration_number')
+                ->get();
+        }
+
+        if ($counterServiceRole->role == 'poly') {
+            $currentQueue = DB::table('services')
+                ->join('queues', 'services.id', '=', 'queues.poly_service_id')
+                ->join('counters', 'counters.service_id', '=', 'services.id')
+                ->select(
+                    'queues.poly_number',
+                    DB::raw('services.name as service_name'),
+                    'queues.poly_status',
+                    DB::raw('counters.name as counters_name')
+                )
+                ->where('counters.id', $idCounter)
+                ->orderBy('poly_number')
+                ->get();
+        }
 
         return response()->json([
             'status' => 'OK',
@@ -73,41 +109,110 @@ class QueueController extends Controller
 
     public function showQueueByUser(int $idUser)
     {
-        $currentQueue = DB::table('services')
-            ->join('queues', 'services.id', '=', 'queues.service_id')
-            ->join('counters', 'counters.service_id', '=', 'services.id')
-            ->select('queues.id', 'queues.number', DB::raw('services.name as service_name'), 'queues.status', DB::raw('counters.name as counters_name'))
-            ->where('counters.user_id', $idUser)
-            ->whereDate('queues.created_at', Carbon::today())
-            ->orderBy('queues.number')
-            ->paginate(10) ?? null;
-        if ($currentQueue->isEmpty()) {
+        // mencari apakah user bertugas di counter pendaftaran atau poli
+        $userCounterRole = DB::table('users')
+            ->join('counters', 'counters.user_id', '=', 'users.id')
+            ->join('services', 'services.id', '=', 'counters.service_id')
+            ->select('services.role')
+            ->where('users.id', $idUser)
+            ->first();
+
+        if ($userCounterRole->role == 'registration') {
+            $currentQueue = DB::table('services')
+                ->join('queues', 'services.id', '=', 'queues.registration_service_id')
+                ->join('counters', 'counters.service_id', '=', 'services.id')
+                ->select(
+                    'queues.id',
+                    'queues.registration_number',
+                    DB::raw('services.name as service_name'),
+                    'queues.registration_status',
+                    DB::raw('counters.name as counters_name')
+                )
+                ->where('counters.user_id', $idUser)
+                ->whereDate('queues.created_at', Carbon::today())
+                ->orderBy('queues.registration_number')
+                ->paginate(10) ?? null;
+            if ($currentQueue->isEmpty()) {
+                return response()->json([
+                    'status' => 'OK',
+                    'data' => null,
+                    'error' => null,
+                ]);
+            }
             return response()->json([
                 'status' => 'OK',
-                'data' => [
-                    'data' => ""
-                ],
+                'data' => new ShowQueueResource($currentQueue),
                 'error' => null,
             ]);
         }
-        return response()->json([
-            'status' => 'OK',
-            'data' => new ShowQueueResource($currentQueue),
-            'error' => null,
-        ]);
+        if ($userCounterRole->role == 'poly') {
+            $currentQueue = DB::table('services')
+                ->join('queues', 'services.id', '=', 'queues.poly_service_id')
+                ->join('counters', 'counters.service_id', '=', 'services.id')
+                ->select(
+                    'queues.id',
+                    'queues.poly_number',
+                    DB::raw('services.name as service_name'),
+                    'queues.poly_status',
+                    DB::raw('counters.name as counters_name')
+                )
+                ->where('counters.user_id', $idUser)
+                ->where('queues.registration_status', 'called')
+                ->whereDate('queues.created_at', Carbon::today())
+                ->orderBy('queues.poly_number')
+                ->paginate(10) ?? null;
+            if ($currentQueue->isEmpty()) {
+                return response()->json([
+                    'status' => 'OK',
+                    'data' => null,
+                    'error' => null,
+                ]);
+            }
+            return response()->json([
+                'status' => 'OK',
+                'data' => new ShowQueueResource($currentQueue),
+                'error' => null,
+            ]);
+        }
     }
 
-    public function update(int $idQueue, UpdateQueueRequest $request)
+    public function update(int $idQueue, Request $request)
     {
-        $data = $request->validated();
-        DB::transaction(function () use (&$idQueue, &$data) {
-            Queue::where('id', $idQueue)
-                ->whereDate('created_at', Carbon::today())
-                ->update([
-                    'status' => $data['status'],
-                    'counter_id' => trim($data['counter_id']),
-                ]);
-        }, 5);
+        $data = Validator::make($request::all(), [
+            "counter_id" => ['required', 'integer']
+        ])->validate();
+        $counterServiceRole = DB::table('counters')
+            ->join('services', 'services.id', '=', 'counters.service_id')
+            ->select('services.role')
+            ->where('counters.id', $data['counter_id'])
+            ->first();
+            
+        if ($counterServiceRole->role == 'registration') {
+            $validateRegisterStatus = Validator::make($request::all(), [
+                "registration_status" => ['required', 'string'],
+            ])->validate();
+            DB::transaction(function () use (&$idQueue, &$data, &$validateRegisterStatus) {
+                Queue::where('id', $idQueue)
+                    ->whereDate('created_at', Carbon::today())
+                    ->update([
+                        'registration_status' => $validateRegisterStatus['registration_status'],
+                        'counter_registration_id' => trim($data['counter_id']),
+                    ]);
+            }, 5);
+        }
+        if ($counterServiceRole->role == 'poly') {
+            $validatePolyStatus = Validator::make($request::all(), [
+                "poly_status" => ['required', 'string'],
+            ])->validate();
+            DB::transaction(function () use (&$idQueue, &$data, &$validatePolyStatus) {
+                Queue::where('id', $idQueue)
+                    ->whereDate('created_at', Carbon::today())
+                    ->update([
+                        'poly_status' => $validatePolyStatus['poly_status'],
+                        'counter_poly_id' => trim($data['counter_id']),
+                    ]);
+            }, 5);
+        }
         $queue = Queue::where('id', $idQueue)
             ->whereDate('created_at', Carbon::today())
             ->get();
@@ -120,11 +225,23 @@ class QueueController extends Controller
 
     public function currentByService(int $idService)
     {
-        $queue = Queue::where('service_id', $idService)
-            ->whereIn('status', ['called', 'skipped'])
+        $service = Service::where('id', $idService)->first();
+        if($service->role == 'registration')
+        {
+            $queue = Queue::where('registration_service_id', $idService)
+            ->whereIn('registration_status', ['called', 'skipped'])
             ->whereDate('created_at', Carbon::today())
-            ->orderByDesc('number')
+            ->orderByDesc('registration_number')
             ->first();
+        }
+        if($service->role == 'poly')
+        {
+            $queue = Queue::where('poly_service_id', $idService)
+            ->whereIn('poly_status', ['called', 'skipped'])
+            ->whereDate('created_at', Carbon::today())
+            ->orderByDesc('poly_number')
+            ->first();
+        }
         return response()->json([
             'status' => 'OK',
             'data' => new QueueResource($queue),

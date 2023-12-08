@@ -18,14 +18,18 @@ class Queue extends Model
     public $incrementing = true;
 
     protected $fillable = [
-        'status',
-        'service_id',
-        'counter_id'
+        'registration_status',
+        'poly_status',
+        'counter_registration_id',
+        'counter_poly_id'
     ];
 
-    public function service(): BelongsTo
+    public function serviceRegistration(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'service_id','id');
-
+        return $this->belongsTo(Service::class, 'registration_service_id','id');
+    }
+    public function servicePoly(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'poly_service_id','id');
     }
 }

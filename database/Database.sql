@@ -14,11 +14,11 @@ drop table websockets_statistics_entries;
 select * from password_reset_tokens;
 select * from counters;
 select * from failed_jobs;
-select * from queues order by number asc;
+select * from queues order by registration_number AND poly_number asc;
 delete from counters where is_active = 1;
 delete from counters where user_id = 4;
 delete from queues where service_id = 1;
-
+select * from queues where counter_registration_id = 679 order by id desc limit 1;
 select counters.name, services.name from counters inner join services on counters.id = services.counter_id;
 
 delete from migrations where id = 23;

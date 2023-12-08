@@ -22,8 +22,13 @@ class QueueCreateRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** 
+         * karena user harus melalui pendaftaran, jadi
+         * pendaftaran sudah otomatis diinputkan dan user
+         * hanya memasukkan service_poly_id saja
+        */
         return [
-            'service_id' => ['required','integer'],
+            'poly_service_id' => ['required','integer'],
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

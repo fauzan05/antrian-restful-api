@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('initial')->nullable(false)->unique();
             $table->string('name', 100)->nullable(false)->unique();
+            $table->enum('role', ['registration','poly'])->nullable(false);
             $table->text('description')->nullable();
             $table->timestamps();
-
         });
     }
 

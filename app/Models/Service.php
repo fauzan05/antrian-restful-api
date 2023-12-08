@@ -23,7 +23,8 @@ class Service extends Model
         'name',
         'initial',
         'description',
-        'counter_id'
+        'counter_id',
+        'role'
     ];
 
     public function counter(): HasMany
@@ -31,8 +32,12 @@ class Service extends Model
         return $this->hasMany(Counter::class, 'service_id', 'id');
     }
 
-    public function queue(): HasMany
+    public function queueRegistration(): HasMany
     {       
-        return $this->hasMany(Queue::class, 'service_id', 'id');
+        return $this->hasMany(Queue::class, 'registration_id', 'id');
+    }
+    public function queuePoly(): HasMany
+    {       
+        return $this->hasMany(Queue::class, 'poly_id', 'id');
     }
 }

@@ -22,8 +22,7 @@ class UpdateQueueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "status" => ["required","string","min:1"],
-            "counter_id" => ["required","integer"],
+            "counter_id" => ['nullable','integer'],
         ];
     }
 }

@@ -18,19 +18,42 @@ class CounterServiceNotValid
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $queue = Queue::find($request->idQueue);
-        $counter = Counter::where('id', $request->counter_id)
-                    ->where('service_id', $queue->service_id)->first();
-        if($counter == null){
+        $counter = Counter::where('id', $request->counter_id)->first() ?? null; 
+        if(!$counter)
+        {
             throw new HttpResponseException(response()->json([
-                "status" => "Validation Error",
+                "status" => "Not Found",
                 'data' => null,
                 'error' => [
-                    "error_message" => "the counter used to serve the service is not suitable "
+                    "error_message" => "counter not found"
                 ]
-            ], 401));
-        }else {
-            return $next($request);
+            ], 404));
         }
+        if(!$counter->service)
+        {
+                throw new HttpResponseException(response()->json([
+                    "status" => "Validation Error",
+                    'data' => null,
+                    'error' => [
+                        "error_message" => "the counter has not registered into services"
+                    ]
+                ], 401));            
+        }
+        if($counter->service->role == 'poly')
+        {
+            $queue = Queue::where('id', $request->idQueue)->where('poly_service_id', $counter->service->id)->first() ?? null;
+            if(!$queue)
+            {
+                throw new HttpResponseException(response()->json([
+                    "status" => "Validation Error",
+                    'data' => null,
+                    'error' => [
+                        "error_message" => "the service counter has not match with poly service id" // yang bisa mengubah poly_service_id adalah counter yang memiliki service id yang sama dengan poly_service_id (service yang terkait)
+                    ]
+                ], 401)); 
+            }
+
+        }
+        return $next($request);
     }
 }
