@@ -31,6 +31,8 @@ drop table migrations;
 drop table password_reset_tokens;
 drop table personal_access_tokens;
 
+update counters set service_id = null where id = 229;
+
 select counters.name, queues.number as current_number from ((counters
 inner join services on counters.service_id = services.id)
 inner join queues on services.id = queues.service_id)
