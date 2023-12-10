@@ -64,14 +64,6 @@ class CounterServiceNotValid
                 }
             }
             
-        } else {
-            throw new HttpResponseException(response()->json([
-                "status" => "Validation Error",
-                'data' => null,
-                'error' => [
-                    "error_message" => "Counter id must be filled" // yang bisa mengubah poly_service_id adalah counter yang memiliki service id yang sama dengan poly_service_id (service yang terkait)
-                ]
-            ], 401));
         }
         if (isset($request->idUser)) {
             $counter = Counter::where('user_id', $request->idUser)->first() ?? null;

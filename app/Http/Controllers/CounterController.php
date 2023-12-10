@@ -85,39 +85,14 @@ class CounterController extends Controller
         ]);
     }
 
-    public function currentQueueByCounter()
+    
+    public function currentQueueByUser(int $idUser)
     {
-        $counters = Counter::all();
-        $queue = [];
-        foreach ($counters as $counter) {
-            $result = DB::table('counters')
-                ->join('services', 'counters.service_id', '=', 'services.id')
-                ->join('queues', 'services.id', '=', 'queues.service_id')
-                ->select('counters.name', 'queues.number')
-                ->where('counters.id', '=', $counter->id)
-                ->whereIn('queues.status', ['called', 'skipped'])
-                ->whereDate('queues.created_at', Carbon::today())
-                ->orderBy('queues.number', 'desc')
-                ->first();
-                if(!$result)
-                {
-                    $queue[] = [
-                        'name' => $counter->name,
-                        'number' => 0
-                    ];
-                }else{
-                    $queue[] = $result;
-                }
-        }
-        return response()->json([
-            'status' => 'OK',
-            'data' => new CurrentQueueResource($queue),
-            'error' => null
-        ]);
+
     }
 
     public function currentCounterByUser(int $idUser)
-    {   
+    {
         $counter = Counter::where('user_id', $idUser)->first();
         return response()->json([
             'status' => 'OK',

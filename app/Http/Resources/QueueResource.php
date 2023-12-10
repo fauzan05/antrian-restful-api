@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use App\Models\Counter;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -30,7 +29,8 @@ class QueueResource extends JsonResource
         array_shift($polyIntval);
         $polyIntval = implode($polyIntval);
         $counterPoly = Counter::where('service_id', $this->servicePoly->id)->first();
-        $counterPoly = explode(" ", $counterPoly->name); 
+        $counterPoly = explode(" ", $counterPoly->name);
+        
         return [
             "id" => $this->id,
             "registration_number" => $this->registration_number,
