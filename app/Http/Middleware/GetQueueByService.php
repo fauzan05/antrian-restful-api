@@ -19,12 +19,20 @@ class GetQueueByService
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $service = Service::where('id', $request->idService)->first();
+        $service = Service::find($request->idService) ?? null;
+        if(!$service)
+        {
+            throw new HttpResponseException(response()->json([
+                "status" => "Not Found",
+                "data" => null,
+                "error" => "Service Not Found"
+            ], 404));
+        }
         if($service->role == 'registration')
         {
             $queue = Queue::where('registration_service_id', $service->id)->whereIn('registration_status', ['called', 'skipped'])
-            ->whereDate('created_at', Carbon::today())->orderByDesc('registration_number')->first() ?? null;
-            if($queue == null) {
+            ->whereDate('created_at', Carbon::today())->orderByDesc('created_at')->get() ?? null;
+            if(!$queue) {
                 throw new HttpResponseException(response()->json([
                     "status" => "OK",
                     "data" => null,
@@ -35,7 +43,7 @@ class GetQueueByService
         if($service->role == 'poly')
         {
             $queue = Queue::where('poly_service_id', $service->id)->whereIn('poly_status', ['called', 'skipped'])
-            ->whereDate('created_at', Carbon::today())->orderByDesc('poly_number')->first() ?? null;
+            ->whereDate('created_at', Carbon::today())->orderByDesc('created_at')->get() ?? null;
             if($queue == null) {
                 throw new HttpResponseException(response()->json([
                     "status" => "OK",

@@ -201,7 +201,7 @@ class ServiceTest extends TestCase
 
     public function testServiceToCounter()
     {
-        $this->seed([UserSeeder::class, ServiceSeeder::class, CounterSeeder::class]);
+        $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         // $service = Service::first();
         // Log::info(json_encode($service->counter[0]->id, JSON_PRETTY_PRINT));
         $counter = Counter::first();

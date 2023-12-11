@@ -75,8 +75,8 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     ->where('idQueue', '[0-9]+')->middleware('getQueueById');
     Route::get('/queues/counters/{idCounter}', [QueueController::class, 'showQueueByCounter'])
     ->where('idCounter', '[0-9]+')->middleware('getCounterById');
-    Route::get('/queues/counters/{idCounter}/current-queue', [QueueController::class, 'currentQueueByCounter']);
-    Route::get('/queues/users/{idUser}/current-queue', [QueueController::class, 'currentQueueByUser']);
+    Route::get('/queues/counters/{idCounter}/current-queue', [QueueController::class, 'allCurrentQueueByCounter']);
+    Route::get('/queues/users/{idUser}/current-queue', [QueueController::class, 'allCurrentQueueByUser']);
     Route::get('/queues/counters/current-queue', [QueueController::class, 'allCurrentQueue']);
     Route::get('/queues/users/{idUser}', [QueueController::class, 'showQueueByUser'])
     ->where('idUser', '[0-9]+')->middleware(['getQueueByUser','counterServiceNotValid']);

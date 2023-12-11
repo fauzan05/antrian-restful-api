@@ -101,6 +101,7 @@ class QueueController extends Controller
                     DB::raw('counters.name as counters_name')
                 )
                 ->where('counters.id', $idCounter)
+                ->whereIn('registration_status', ['called', 'skipped'])
                 ->orderBy('poly_number')
                 ->get();
         }
@@ -232,20 +233,34 @@ class QueueController extends Controller
 
     public function currentByService(int $idService)
     {
-        $service = Service::where('id', $idService)->first();
+        $service = Service::find($idService);
         if ($service->role == 'registration') {
             $queue = Queue::where('registration_service_id', $idService)
                 ->whereIn('registration_status', ['called', 'skipped'])
                 ->whereDate('created_at', Carbon::today())
-                ->orderByDesc('registration_number')
+                ->orderByDesc('updated_at')
                 ->first();
+            if(!$queue){
+                return response()->json([
+                    'status' => 'OK',
+                    'data' => null,
+                    'error' => null,
+                ]);
+            }
         }
         if ($service->role == 'poly') {
             $queue = Queue::where('poly_service_id', $idService)
                 ->whereIn('poly_status', ['called', 'skipped'])
                 ->whereDate('created_at', Carbon::today())
-                ->orderByDesc('poly_number')
+                ->orderByDesc('updated_at')
                 ->first();
+            if(!$queue){
+                return response()->json([
+                    'status' => 'OK',
+                    'data' => null,
+                    'error' => null,
+                ]);
+            }
         }
         return response()->json([
             'status' => 'OK',
@@ -257,18 +272,43 @@ class QueueController extends Controller
     public function currentByCounter(int $idCounter)
     {
         $counter = Counter::find($idCounter);
-        $queue = Queue::where('service_id', $counter->service->id)
-            ->whereIn('status', ['called', 'skipped'])
+        if($counter->service->role == "registration")
+        {
+            $queue = Queue::where('registration_service_id', $counter->service->id)
+            ->whereIn('registration_status', ['called', 'skipped'])
             ->whereDate('created_at', Carbon::today())
-            ->orderByDesc('number')
+            ->orderByDesc('updated_at')
             ->first();
+            if(!$queue){
+                return response()->json([
+                    'status' => 'OK',
+                    'data' => null,
+                    'error' => null,
+                ]);
+            }
+        }
+        if($counter->service->role == "poly")
+        {
+            $queue = Queue::where('poly_service_id', $counter->service->id)
+            ->whereIn('poly_status', ['called', 'skipped'])
+            ->whereDate('created_at', Carbon::today())
+            ->orderByDesc('updated_at')
+            ->first();
+            if(!$queue){
+                return response()->json([
+                    'status' => 'OK',
+                    'data' => null,
+                    'error' => null,
+                ]);
+            }
+        }
         return response()->json([
             'status' => 'OK',
             'data' => new QueueResource($queue),
             'error' => null,
         ]);
     }
-    public function currentQueueByCounter(int $idCounter)
+    public function allCurrentQueueByCounter(int $idCounter)
     {
         $counters = Counter::where('id', $idCounter)->first();
         if ($counters->service->role == "registration") {
@@ -334,7 +374,7 @@ class QueueController extends Controller
         }
     }
 
-    public function currentQueueByUser(int $idUser)
+    public function allCurrentQueueByUser(int $idUser)
     {
         $counters = Counter::join('services', 'services.id', '=', 'counters.service_id')
             ->where('counters.user_id', $idUser)

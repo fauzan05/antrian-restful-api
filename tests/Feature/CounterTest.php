@@ -137,7 +137,7 @@ class CounterTest extends TestCase
             ]);     
     }
 
-    public function testGetAllCounter()
+    public function testGetAllCounters()
     {
         $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
         $user = User::where('username', 'fauzan123')->first();
@@ -167,7 +167,7 @@ class CounterTest extends TestCase
                     ],
                     [
                         'id' => $counter[2]->id,
-                        'name' => 'Loket 3',
+                        'name' => 'Loket Layanan Poli Gigi',
                         'operator' => [
                             'name' => 'Rudi',
                         ]
@@ -181,9 +181,9 @@ class CounterTest extends TestCase
     public function testUpdateCounter()
     {
         $this->seed([UserSeeder::class, NewServiceSeeder::class, CounterSeeder::class]);
-        $counter1 = Counter::where('name', 'Loket 3')->first();
+        $counter1 = Counter::where('name', 'Loket 1')->first();
         $service = Service::where('initial', 'A')->first();
-        $user = User::where('username', 'rudi123')->first();
+        $user = User::where('username', 'fauzan123')->first();
         $admin = User::where('role', 'admin')->first();
         $token = $admin->createToken('test-token')->plainTextToken;
         $this->put('/api/counters/' . $counter1->id, 
