@@ -32,28 +32,28 @@ class CounterSeeder extends Seeder
         $user = User::where('username', 'rudi123')->first();
         $service = Service::where('initial', 'B')->first();
         Counter::create([
-            'name' => 'Loket ' . $service->name,
+            'name' => 'Loket A',
             'user_id' => $user->id,
             'service_id' => $service->id
         ]);
         $user = User::where('username', 'heri123')->first();
         $service = Service::where('initial', 'C')->first();
         Counter::create([
-            'name' => 'Loket ' . $service->name,
+            'name' => 'Loket B',
             'user_id' => $user->id,
             'service_id' => $service->id
         ]);
         $user = User::where('username', 'bela123')->first();
         $service = Service::where('initial', 'D')->first();
         Counter::create([
-            'name' => 'Loket ' . $service->name,
+            'name' => 'Loket C',
             'user_id' => $user->id,
             'service_id' => $service->id
         ]);
         $user = User::where('username', 'indri123')->first();
         $service = Service::where('initial', 'E')->first();
         Counter::create([
-            'name' => 'Loket ' . $service->name,
+            'name' => 'Loket D',
             'user_id' => $user->id,
             'service_id' => $service->id
         ]);

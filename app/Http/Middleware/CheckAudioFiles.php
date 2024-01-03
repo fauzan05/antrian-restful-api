@@ -19,16 +19,18 @@ class CheckAudioFiles
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $files = Storage::files('public/audio');
-        $url_storage = Storage::path('public/audio/' . $request->nameFile . '.mp3');
-        $isExist = file_exists($url_storage);
-        if(!$isExist && empty($files)) {
+        $audios = Storage::files('public/audio');
+        $allowedExtensions = ['mp3', 'aac'];
+        $audios = array_filter($audios, function ($file) use ($allowedExtensions) {
+            $extension = pathinfo($file, PATHINFO_EXTENSION);
+            return in_array($extension, $allowedExtensions);
+        });
+        if(!$audios && empty($audios)) {
             throw new HttpResponseException(response()->json([
                 "status" => "Not Found",
                 "data" => null,
-                "isExist" => $isExist,
                 "error" => [
-                    "error_message" => "Files has empty"
+                    "error_message" => "Audios has empty"
                 ]
             ], 404));
         }

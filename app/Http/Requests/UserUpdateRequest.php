@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+
 class UserUpdateRequest extends FormRequest
 {
     /**
@@ -23,10 +24,11 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['nullable','string','min:3', 'max:50'],
-            'old_password' => ['required', 'string', 'max:50'],
-            'new_password' => ['required', 'string', 'min:3', 'max:50'],
-            'new_password_confirmation' => ['required', 'string', 'same:new_password', 'max:50']
+            'name' => ['required', 'string', 'min:3', 'max:50'],
+            'username' => ['required', 'string', 'min:3', 'max:50'],
+            'old_password' => ['required', 'string', 'min:3', 'max:50'],
+            'new_password' => ['nullable', 'string', 'min:3', 'max:50'],
+            'new_password_confirmation' => ['nullable', 'string', 'same:new_password', 'min:3', 'max:50']
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

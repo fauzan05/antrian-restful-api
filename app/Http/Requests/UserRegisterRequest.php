@@ -23,10 +23,10 @@ class UserRegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string','min:3', 'max:50'],
-            'username' => ['required','string','min:3', 'max:50'],
-            'password' => ['required','string','min:3','max:50'],
-            'password_confirmation' => ['required', 'string', 'same:password']
+            'name' => ['required', 'string', 'min:3', 'max:50'],
+            'username' => ['required', 'string', 'min:3', 'max:50'],
+            'password' => ['required', 'string', 'min:3', 'max:50'],
+            'password_confirmation' => ['required', 'string', 'same:password', 'min:3', 'max:50']
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

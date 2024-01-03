@@ -11,6 +11,7 @@ use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
 
@@ -141,11 +142,11 @@ class UserTest extends TestCase
             ]);
     }
 
-    public function testUpdateUser()
+    public function testUpdateCurrentUser()
     {
         $this->seed([UserSeeder::class]);
-        $user = User::where('username', 'fauzan123')->first();
-        $token = $user->createToken('test-token')->plainTextToken;
+        $user1 = User::where('username', 'fauzan123')->first();
+        $token = $user1->createToken('test-token')->plainTextToken;
         $this->put('/api/users/update', 
         [
             'name' => 'Fauzan Nurhidayat',
@@ -160,13 +161,47 @@ class UserTest extends TestCase
             ->assertJson([
                 "status" => "OK",
                 "data" => [
-                    "id" => $user->id,
+                    "id" => $user1->id,
                     "name" => "Fauzan Nurhidayat",
                     "username" => "fauzan123",
                     "role" => "operator"
                 ],
                 "error" => null
             ]);
+        $user2 = User::where('username', 'fauzan123')->first();
+        self::assertFalse(Hash::check($user1->password, $user2->password));
+    }
+
+    public function testUpdateUserById()
+    {
+        $this->seed([UserSeeder::class]);
+        $user1 = User::where('username', 'fauzan123')->first();
+        $admin = User::where('role', 'admin')->first();
+        $token = $admin->createToken('test-token')->plainTextToken;
+        $this->put('/api/users/' . $user1->id,
+        [
+            'name' => 'Zane FX',
+            'username' => 'zanexxx',
+            'old_password' => 'rahasia',
+            'new_password' => 'fauzan123',
+            'new_password_confirmation' => 'fauzan123'
+        ],
+        [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ])->assertStatus(200)
+            ->assertJson([
+                "status" => "OK",
+                "data" => [
+                    "id" => $user1->id,
+                    "name" => "Zane FX",
+                    "username" => "zanexxx",
+                    "role" => "operator"
+                ],
+                "error" => null
+            ]);
+        $user2 = User::where('username', 'zanexxx')->first();
+        self::assertFalse(Hash::check($user1->password, $user2->password));
     }
 
     public function testGetAllUser()

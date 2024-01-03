@@ -21,8 +21,9 @@ class CounterResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'operator' => $this->whenNotNull(new UserNameResource($this->user)),
-            'service' => $this->whenNotNull(new ServiceResource($this->service))
+            'operator' => $this->whenNotNull(new UserResource($this->user)),
+            'service' => $this->whenNotNull(new ServiceResource($this->service)),
+            'is_active' => $this->is_active
         ];
     }
 }

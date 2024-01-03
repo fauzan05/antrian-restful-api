@@ -3,9 +3,13 @@
 namespace App\Http;
 
 use App\Http\Middleware\CheckAudioFiles;
+use App\Http\Middleware\CheckOperationalHours;
+use App\Http\Middleware\CheckVideoFiles;
 use App\Http\Middleware\CounterIsExist;
 use App\Http\Middleware\CounterServiceNotValid;
 use App\Http\Middleware\CounterValidation;
+use App\Http\Middleware\CreateCounterNameUnique;
+use App\Http\Middleware\CreateCounterUserUnique;
 use App\Http\Middleware\CurrentQueue;
 use App\Http\Middleware\CurrentQueueIsNull;
 use App\Http\Middleware\EnsureUserHasAdminRole;
@@ -18,6 +22,9 @@ use App\Http\Middleware\HasCounter;
 use App\Http\Middleware\InitialServiceValidation;
 use App\Http\Middleware\QueueIsExist;
 use App\Http\Middleware\RegisterValidation;
+use App\Http\Middleware\ServiceNameIsExist;
+use App\Http\Middleware\UpdateCounterNameUnique;
+use App\Http\Middleware\UpdateCounterUserUnique;
 use App\Http\Middleware\UpdateUsers;
 use App\Http\Middleware\UserCounterValidation;
 use App\Http\Middleware\UserValidation;
@@ -87,8 +94,10 @@ class Kernel extends HttpKernel
         'username' => RegisterValidation::class,
         'getCounterById' => GetCounterById::class,
         'initialIsExist' => InitialServiceValidation::class,
+        'serviceNameIsExist' => ServiceNameIsExist::class,
         'getQueueById' => QueueIsExist::class,
-        'checkFiles' => CheckAudioFiles::class,
+        'checkAudioFiles' => CheckAudioFiles::class,
+        'checkVideoFiles' => CheckVideoFiles::class,
         'getQueueByService' => GetQueueByService::class,
         'getQueueByCounter' => GetQueueByCounter::class,
         'getQueueByUser' => GetQueueByUser::class,
@@ -96,6 +105,11 @@ class Kernel extends HttpKernel
         'userValidation' => UserValidation::class,
         'counterServiceNotValid' => CounterServiceNotValid::class,
         'userCounterValidation' => UserCounterValidation::class,
-        'updateUsers' => UpdateUsers::class
+        'updateUsers' => UpdateUsers::class,
+        'updateCounterUserUnique' => UpdateCounterUserUnique::class,
+        'updateCounterNameUnique' => UpdateCounterNameUnique::class,
+        'createCounterUserUnique' => CreateCounterUserUnique::class,
+        'createCounterNameUnique' => CreateCounterNameUnique::class,
+        'checkOperationalHours' => CheckOperationalHours::class
     ];
 }

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ServiceCreateRequest extends FormRequest
+class VideoUploadRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,10 @@ class ServiceCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ["required","string","max:100", "min:2"],
-            "initial" => ["required", "string", "min:1"],
-            "role" => ["required", "string", "min:1"],
-            "description" => ["nullable","string"],
+            'video_file' => [
+                'mimes:mp4,mov,mkv,mpeg',
+                'max:50000'
+            ]
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
@@ -36,7 +36,7 @@ class ServiceCreateRequest extends FormRequest
             'data' => null,
             'error' => [
                 'error_message' => $validator->getMessageBag()
-            ]    
+            ]      
         ], 400));
     }
 }

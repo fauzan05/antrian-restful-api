@@ -25,6 +25,7 @@ class ServiceUpdateRequest extends FormRequest
         return [
             "name" => ["required", "string","max:100", "min:2"],
             "initial" => ["required", "string", "min:1"],
+            "role" => ["required", "string", "min:1"],
             "description" => ["nullable", "string"],
         ];
     }

@@ -45,16 +45,17 @@ class CounterController extends Controller
     {
         return response()->json([
             'status' => 'OK',
-            'data' => CounterResource::collection(Counter::where('is_active', true)->get()),
+            'data' => CounterResource::collection(Counter::all()),
             'error' => null
         ]);
     }
 
     public function update(CounterCreateRequest $request, int $idCounter)
     {
-        $counter = Counter::where('id', $idCounter)->first();
         $data = $request->validated();
+        $counter = Counter::where('id', $idCounter)->first();
         $counter->name = trim($data['name']);
+        $counter->is_active = (boolean)$data['is_active'] ? true : false;
         $counter->fill($data);
         $counter->save();
         $counter = Counter::where('id', $idCounter)->first();

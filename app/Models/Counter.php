@@ -19,7 +19,8 @@ class Counter extends Model
     protected $fillable = [
         'name',
         'user_id',
-        'service_id'
+        'service_id',
+        'is_active'
     ];
 
     public function user(): BelongsTo

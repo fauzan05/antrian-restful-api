@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     protected $table = "services";
     protected $primaryKey = "id";
     protected $keyType = "int";

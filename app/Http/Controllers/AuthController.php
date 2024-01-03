@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Requests\CurrentUserUpdateRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
@@ -66,7 +67,7 @@ class AuthController extends Controller
         ]);
     }
 
-    public function update(UserUpdateRequest $request): JsonResponse
+    public function updateCurrent(CurrentUserUpdateRequest $request): JsonResponse
     {
         $data = $request->validated();
         $user = auth()->user();
@@ -78,6 +79,20 @@ class AuthController extends Controller
             "data" => new UserResource($user),
             "error" => null
         ]);   
+    }
+
+    public function update(int $id, UserUpdateRequest $request)
+    {
+        $data = $request->validated();
+        $user = User::find($id);
+        $user->password = !$data['new_password'] ? $user->password : $data['new_password'];
+        $user->fill($data);
+        $user->save();
+        return response()->json([
+            "status" => "OK",
+            "data" => new UserResource($user),
+            "error" => null
+        ])->setStatusCode(200);
     }
 
     public function delete(int $id): JsonResponse

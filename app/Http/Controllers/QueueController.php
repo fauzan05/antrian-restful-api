@@ -439,7 +439,8 @@ class QueueController extends Controller
             if ($counter->service->role == "registration") {
                 $queues[$key] = [
                     "name" => $counter->name,
-                    "number" => 0
+                    "number" => 0,
+                    "status" => null
                 ];
                 $result = Queue::where('counter_registration_id', $counter->id)
                     ->whereIn('registration_status', ['called', 'skipped'])
@@ -447,12 +448,14 @@ class QueueController extends Controller
                     ->first();
                 if ($result) {
                     $queues[$key]["number"] = $result->registration_number;
+                    $queues[$key]["status"] = $result->registration_status;
                 }
             }
             if ($counter->service->role == "poly") {
                 $queues[$key] = [
                     "name" => $counter->name,
-                    "number" => 0
+                    "number" => 0,
+                    "status" => null
                 ];
                 $result = Queue::where('counter_poly_id', $counter->id)
                     ->whereIn('poly_status', ['called', 'skipped'])
@@ -460,12 +463,22 @@ class QueueController extends Controller
                     ->first();
                 if ($result) {
                     $queues[$key]["number"] = $result->poly_number;
+                    $queues[$key]["status"] = $result->poly_status;
                 }
             }
         }
         return response()->json([
             'status' => 'OK',
             'data' => $queues,
+            'error' => null
+        ]);
+    }
+
+    public function countAllQueue()
+    {
+        return response()->json([
+            'status' => 'OK',
+            'data' => Queue::all()->count(),
             'error' => null
         ]);
     }
