@@ -9,6 +9,7 @@ use App\Http\Resources\QueueCollection;
 use App\Http\Resources\QueueResource;
 use App\Http\Resources\ShowQueueResource;
 use App\Models\Counter;
+use App\Models\OperationalHours;
 use App\Models\Queue;
 use App\Models\Service;
 use App\Models\User;

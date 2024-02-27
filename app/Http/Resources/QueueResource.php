@@ -15,7 +15,7 @@ class QueueResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $host = 'http://127.0.0.1:8000/api/files/';
+        $host = 'http://127.0.0.1:8001/assets/audio/';
         // bagian pendaftaran
         $registrationNumber = str_split((string) $this->registration_number);
         $registrationIntval = $registrationNumber;
@@ -43,15 +43,23 @@ class QueueResource extends JsonResource
             'service_registration' => new ServiceResource($this->serviceRegistration),
             'service_poly' => new ServiceResource($this->servicePoly),
             'date' => $this->created_at->format('l, j F Y H:i:s'),
-            'link-audio-registration' => isset($this->counter_registration_id) ? [$host . 'opening', $host . 'nomor-antrian', $host . $registrationNumber[0], $host . intval($registrationIntval), $host . 'silahkan-menuju-loket', $host . $counterRegistration[1]] : null,
+            'link-audio-registration' => isset($this->counter_registration_id)
+             ? [
+                $host . 'opening' . '.mp3',
+                $host . 'nomor-antrian' . '.mp3',
+                $host . $registrationNumber[0] . '.mp3',
+                $host . intval($registrationIntval) . '.mp3',
+                $host . 'silahkan-menuju-loket' . '.mp3',
+                $host . $counterRegistration[1] . '.mp3'
+                ] : null,
             'link-audio-poly' => isset($this->counter_registration_id)
                 ? [
-                    $host . 'opening',
-                    $host . 'nomor-antrian',
-                    $host . $polyNumber[0],
-                    $host . intval($polyIntval),
-                    $host . 'silahkan-menuju-loket',
-                    $host . $counterRegistration[1],
+                    $host . 'opening' . '.mp3',
+                    $host . 'nomor-antrian' . '.mp3',
+                    $host . $polyNumber[0] . '.mp3',
+                    $host . intval($polyIntval) . '.mp3',
+                    $host . 'silahkan-menuju-loket' . '.mp3',
+                    $host . $counterRegistration[1] . '.mp3',
                     // $host . $counterPoly[1],
                     // $host . $counterPoly[2],
                     // $host . $counterPoly[3]

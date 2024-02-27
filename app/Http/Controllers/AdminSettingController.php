@@ -50,15 +50,18 @@ class AdminSettingController extends Controller
     public function setOperationalHours(SetOperationalHoursRequest $request)
     {
         $data = $request->validated();
-        $operationalHours = OperationalHours::where('id', $data['id'])->update([
-            'open' => $data['open'],
-            'close' => $data['close'],
-            'is_active' => $data['is_active']
+        $data = reset($data);
+        foreach($data as $key => $item):
+        OperationalHours::where('id', $key)->update([
+            'open' => $item[0],
+            'close' => $item[1],
+            'is_active' => $item[2]
         ]);
-        $operationalHours = OperationalHours::where('id', $data['id'])->first();
+        endforeach;
+        $operationalHours = OperationalHours::all();
         return response()->json([
             "status" => "OK",
-            "data" => $operationalHours,
+            "data" => $data,
             "error" => null
         ]);   
     }

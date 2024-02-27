@@ -22,10 +22,7 @@ class SetOperationalHoursRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'int'],
-            'open' => ['nullable'],
-            'close' => ['nullable'],
-            'is_active' => ['nullable']
+            'data' => ['required', 'array']
         ];
     }
 }

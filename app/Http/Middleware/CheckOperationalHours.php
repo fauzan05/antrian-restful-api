@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\OperationalHours;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,23 +18,36 @@ class CheckOperationalHours
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
-        
-        if(!in_array($request->days, $days))
-        {
-            throw new HttpResponseException(
-                response()->json(
-                    [
-                        'status' => 'Bad Request',
-                        'data' => null,
-                        'error' => [
-                            'error_message' => 'Day is not valid',
-                        ],
-                    ],
-                    400,
-                ),
-            );
-        }
+        $operationalHours = OperationalHours::all();
+        $currentDay = now()->translatedFormat('l');
+        foreach($operationalHours as $key => $oh):
+            if($currentDay === $oh->days):
+            //     $now = Carbon::now();
+            // dd($now->greaterThan($oh->open));
+                // dd($oh->days);
+                if($oh->close && (boolean)$oh->is_active && now()->greaterThan($oh->close)) {
+                    throw new HttpResponseException(response()->json([
+                        "status" => "Forbidden",
+                        "data" => null,
+                        "error" => [
+                            "error_message" => "Puskesmas sudah tutup!"
+                        ]
+                    ], 403));
+                    // dd($oh->close);
+                }
+                if($oh->open && (boolean)$oh->is_active && now()->lessThan($oh->open)) {
+                    throw new HttpResponseException(response()->json([
+                        "status" => "Forbidden",
+                        "data" => null,
+                        "error" => [
+                            "error_message" => "Puskesmas belum dibuka!"
+                        ]
+                    ], 403));
+                }
+                
+            endif;
+            
+        endforeach;
         return $next($request);
     }
 }

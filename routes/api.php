@@ -86,7 +86,7 @@ Route::get('/counters/{idCounter}', [CounterController::class, 'get'])
     ->middleware('getCounterById');
 Route::get('/counters', [CounterController::class, 'show']);
 Route::get('/services', [ServiceController::class, 'show']);
-Route::post('/queues', [QueueController::class, 'create']);
+Route::post('/queues', [QueueController::class, 'create'])->middleware('checkOperationalHours');
 Route::get('/queues', [QueueController::class, 'show']);
 Route::get('/queues/{idQueue}', [QueueController::class, 'get'])
     ->where('idQueue', '[0-9]+')->middleware('getQueueById');

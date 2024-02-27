@@ -9,6 +9,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
+use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,5 +30,8 @@ class AppServiceProvider extends ServiceProvider
         DB::listen(function (QueryExecuted $query){
             Log::info($query->sql);
         });
+
+        config(['app.locale' => 'id']);
+	    Carbon::setLocale('id');
     }
 }
