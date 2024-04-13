@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AdminSetting extends Model
 {
-    protected $table = "admin_settings";
+    protected $table = "app_settings";
     protected $primaryKey = "id";
     protected $keyType = "int";
     public $timestamps = true;

@@ -30,6 +30,7 @@ class UserValidation
                 ]
             ], 401));
         }
+        // jika user dengan role operator belum didaftarkan loket, maka tampilkan error
         $counter = Counter::where('user_id', $user->id)->first() ?? null;
         if(!$counter && $user->role == 'operator') {
             throw new HttpResponseException(response()->json([

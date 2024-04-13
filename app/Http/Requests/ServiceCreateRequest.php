@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class ServiceCreateRequest extends FormRequest
 {
@@ -25,7 +26,7 @@ class ServiceCreateRequest extends FormRequest
         return [
             "name" => ["required","string","max:100", "min:2"],
             "initial" => ["required", "string", "min:1"],
-            "role" => ["required", "string", "min:1"],
+            "role" => ["required", Rule::in(['registration', 'poly'])],
             "description" => ["nullable","string"],
         ];
     }

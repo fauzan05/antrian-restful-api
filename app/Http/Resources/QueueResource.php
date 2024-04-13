@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Counter;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -65,6 +66,8 @@ class QueueResource extends JsonResource
                     // $host . $counterPoly[3]
                 ]
                 : null,
+                "created_at" => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
+                "updated_at" => Carbon::parse($this->updated_at)->format('Y-m-d H:i:s')
         ];
     }
 }

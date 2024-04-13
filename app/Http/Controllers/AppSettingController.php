@@ -8,10 +8,8 @@ use App\Models\AdminSetting;
 use App\Models\OperationalHours;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
-class AdminSettingController extends Controller
+class AppSettingController extends Controller
 {
     public function setVideoDisplay(VideoUploadRequest $request)
     {
@@ -61,7 +59,7 @@ class AdminSettingController extends Controller
         $operationalHours = OperationalHours::all();
         return response()->json([
             "status" => "OK",
-            "data" => $data,
+            "data" => $operationalHours,
             "error" => null
         ]);   
     }

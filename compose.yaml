@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: antrian-db
+    ports:
+      - protocol: tcp
+        published: 3306
+        target: 3306
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+      MARIADB_DATABASE: antrian

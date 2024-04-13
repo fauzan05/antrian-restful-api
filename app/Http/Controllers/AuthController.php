@@ -6,14 +6,10 @@ use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Requests\CurrentUserUpdateRequest;
 use App\Http\Requests\UserUpdateRequest;
-use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Counter;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -26,7 +22,7 @@ class AuthController extends Controller
         $user->name = trim($data['name']);
         $user->username = trim($data['username']);
         $user->password = Hash::make($data['password']);
-        $user->role = 'operator';
+        $user->role = $data["role"];
         $user->save();
 
         return response()->json([
@@ -40,13 +36,13 @@ class AuthController extends Controller
     {
         $data = $request->validated();
         $user = User::where('username', trim($data['username']))->first();
-        $success['token'] = $user->createToken('token-login')->plainTextToken;
+        $success['token'] = $user->createToken('token-login', ['*'], now()->addDay())->plainTextToken;
         return response()->json([
             "status" => "OK",
             'data' => new UserResource($user),
             'token' => $success['token'],
             'error' => null
-        ]);  
+        ])->setStatusCode(200);  
     }
 
     public function show(): JsonResponse
@@ -55,7 +51,7 @@ class AuthController extends Controller
             'status' => "OK",
             'data' => UserResource::collection(User::where('role', 'operator')->get()),
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function get(): JsonResponse
@@ -64,29 +60,29 @@ class AuthController extends Controller
             "status" => "OK",
             "data" => new UserResource(auth()->user()),
             "error" => null
-        ]);
+        ])->setStatusCode(200);
     }
 
-    public function updateCurrent(CurrentUserUpdateRequest $request): JsonResponse
+    public function updateCurrentPassword(CurrentUserUpdateRequest $request): JsonResponse
     {
         $data = $request->validated();
         $user = auth()->user();
-        $user->password = $data['new_password'];
         $user->fill($data);
+        $user->password = $data['new_password'];
         $user->save();
         return response()->json([
             "status" => "OK",
             "data" => new UserResource($user),
             "error" => null
-        ]);   
+        ])->setStatusCode(200);   
     }
 
     public function update(int $id, UserUpdateRequest $request)
     {
         $data = $request->validated();
         $user = User::find($id);
-        $user->password = !$data['new_password'] ? $user->password : $data['new_password'];
         $user->fill($data);
+        $user->password = !$data['new_password'] ? $user->password : $data['new_password'];
         $user->save();
         return response()->json([
             "status" => "OK",
@@ -104,7 +100,7 @@ class AuthController extends Controller
             'status' => "OK",
             'data' => null,
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function logout()

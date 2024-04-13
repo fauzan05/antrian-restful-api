@@ -5,23 +5,20 @@ namespace App\Http;
 use App\Http\Middleware\CheckAudioFiles;
 use App\Http\Middleware\CheckOperationalHours;
 use App\Http\Middleware\CheckVideoFiles;
-use App\Http\Middleware\CounterIsExist;
 use App\Http\Middleware\CounterServiceNotValid;
-use App\Http\Middleware\CounterValidation;
+use App\Http\Middleware\CountRegistrationService;
 use App\Http\Middleware\CreateCounterNameUnique;
 use App\Http\Middleware\CreateCounterUserUnique;
-use App\Http\Middleware\CurrentQueue;
-use App\Http\Middleware\CurrentQueueIsNull;
 use App\Http\Middleware\EnsureUserHasAdminRole;
 use App\Http\Middleware\GetCounterById;
 use App\Http\Middleware\GetQueueByCounter;
 use App\Http\Middleware\GetQueueByService;
 use App\Http\Middleware\GetQueueByUser;
 use App\Http\Middleware\GetServiceById;
-use App\Http\Middleware\HasCounter;
 use App\Http\Middleware\InitialServiceValidation;
 use App\Http\Middleware\QueueIsExist;
 use App\Http\Middleware\RegisterValidation;
+use App\Http\Middleware\ServiceIdIsExist;
 use App\Http\Middleware\ServiceNameIsExist;
 use App\Http\Middleware\UpdateCounterNameUnique;
 use App\Http\Middleware\UpdateCounterUserUnique;
@@ -110,6 +107,8 @@ class Kernel extends HttpKernel
         'updateCounterNameUnique' => UpdateCounterNameUnique::class,
         'createCounterUserUnique' => CreateCounterUserUnique::class,
         'createCounterNameUnique' => CreateCounterNameUnique::class,
-        'checkOperationalHours' => CheckOperationalHours::class
+        'checkOperationalHours' => CheckOperationalHours::class,
+        'countRegistrationService' => CountRegistrationService::class,
+        'serviceIdIsExist' => ServiceIdIsExist::class
     ];
 }

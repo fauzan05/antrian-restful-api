@@ -3,19 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\QueueCreateRequest;
-use App\Http\Requests\UpdateQueueRequest;
 use App\Http\Resources\CurrentQueueResource;
-use App\Http\Resources\QueueCollection;
 use App\Http\Resources\QueueResource;
 use App\Http\Resources\ShowQueueResource;
 use App\Models\Counter;
-use App\Models\OperationalHours;
 use App\Models\Queue;
 use App\Models\Service;
-use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
@@ -25,29 +19,37 @@ class QueueController extends Controller
     public function create(QueueCreateRequest $request)
     {
         $data = $request->validated();
-        $registrationService = Service::where('role', 'registration')->first();
-        $registrationNumber = Queue::where('registration_service_id', $registrationService->id)
+        // memilih salah satu layanan dengan role registrasi secara random
+        $registrationService = Service::select('initial')->where('role', 'registration')->get();
+        $lowestQueueCountService = 999999999;
+        for($i = 1; $i <= count($registrationService); $i++) {
+            // mencari antrian dengan layanan dipanggilnya paling sedikit
+            $registrationNumber = Queue::select('id')->where('registration_service_id', $registrationService->id)
             ->whereDate('created_at', Carbon::today())
             ->count();
-        $polyService = Service::where('id', $data['poly_service_id'])->first();
-        $polyNumber = Queue::where('poly_service_id', $data['poly_service_id'])
+            if ($registrationNumber < $lowestQueueCountService) {
+                $lowestQueueCountService = $registrationNumber;
+            }
+        }
+        $polyService = Service::select('initial')->where('id', $data['poly_service_id'])->first();
+
+        $polyNumber = Queue::select('id')->where('poly_service_id', $data['poly_service_id'])
             ->whereDate('created_at', Carbon::today())
             ->count();
+
         $queue = new Queue();
-        $queue->registration_number = $registrationService->initial . str_pad($registrationNumber + 1, 3, '0', STR_PAD_LEFT);
+        $queue->registration_number = $registrationService->initial . str_pad($lowestQueueCountService + 1, 3, '0', STR_PAD_LEFT); // A001 (contoh)
         $queue->poly_number = $polyService->initial . str_pad($polyNumber + 1, 3, '0', STR_PAD_LEFT);
         $queue->registration_service_id = $registrationService->id;
         $queue->poly_service_id = $polyService->id;
         $queue->registration_status = 'waiting';
         $queue->poly_status = 'waiting';
         $queue->save();
-        return response()
-            ->json([
+        return response()->json([
                 'status' => 'OK',
                 'data' => new QueueResource($queue),
                 'error' => 'null',
-            ])
-            ->setStatusCode(201);
+        ])->setStatusCode(201);
     }
 
     public function get(int $id)
@@ -57,7 +59,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => new QueueResource($queue),
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function show()
@@ -66,7 +68,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => QueueResource::collection(Queue::all()),
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function showQueueByCounter(int $idCounter)
@@ -111,7 +113,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => new ShowQueueResource($currentQueue),
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function showQueueByUser(int $idUser)
@@ -181,7 +183,7 @@ class QueueController extends Controller
                 'data' => new ShowQueueResource($allQueue->get()),
                 'data_paginate' => new ShowQueueResource($allQueue->paginate(10)),
                 'error' => null,
-            ]);
+            ])->setStatusCode(200);
         }
     }
 
@@ -229,7 +231,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => QueueResource::collection($queue),
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function currentByService(int $idService)
@@ -267,7 +269,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => new QueueResource($queue),
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function currentByCounter(int $idCounter)
@@ -307,7 +309,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => new QueueResource($queue),
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
     public function allCurrentQueueByCounter(int $idCounter)
     {
@@ -371,7 +373,7 @@ class QueueController extends Controller
                 'status' => 'OK',
                 'data' => new CurrentQueueResource($queue),
                 'error' => null
-            ]);
+            ])->setStatusCode(200);
         }
     }
 
@@ -428,7 +430,7 @@ class QueueController extends Controller
                 'status' => 'OK',
                 'data' => new CurrentQueueResource($queue),
                 'error' => null
-            ]);
+            ])->setStatusCode(200);
         }
     }
 
@@ -472,7 +474,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => $queues,
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function countAllQueue()
@@ -481,7 +483,7 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => Queue::all()->count(),
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function destroy()
@@ -491,6 +493,6 @@ class QueueController extends Controller
             'status' => 'OK',
             'data' => null,
             'error' => null,
-        ]);
+        ])->setStatusCode(200);
     }
 }

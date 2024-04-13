@@ -23,10 +23,10 @@ class CounterCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string','min:3', 'max:100'],
+            'name' => ['required','string','min:3','max:100'],
             'user_id' => ['required', 'integer'],
             'service_id' => ['required', 'integer'],
-            'is_active' => ['nullable', 'boolean'] // 0 dianggap null, makannya di set nullable
+            'is_active' => ['boolean'] // 0 dianggap null, makannya di set nullable
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

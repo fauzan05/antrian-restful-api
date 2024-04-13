@@ -19,7 +19,7 @@ return new class extends Migration
             $table->boolean('is_active')->nullable(false)->default(true);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('service_id')->references('id')->on('services');
+            $table->foreign('service_id')->references('id')->on('services')->cascadeOnDelete();
         });
     }
 

@@ -3,15 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CounterCreateRequest;
-use App\Http\Requests\CounterUpdateRequest;
-use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\CounterResource;
-use App\Http\Resources\CurrentQueueResource;
-use App\Http\Resources\UserCollection;
 use App\Models\Counter;
-use App\Models\Queue;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CounterController extends Controller
@@ -38,7 +31,7 @@ class CounterController extends Controller
             'status' => 'OK',
             'data' => new CounterResource($counter),
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function show()
@@ -47,7 +40,7 @@ class CounterController extends Controller
             'status' => 'OK',
             'data' => CounterResource::collection(Counter::all()),
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function update(CounterCreateRequest $request, int $idCounter)
@@ -63,7 +56,7 @@ class CounterController extends Controller
             'status' => 'OK',
             'data' => new CounterResource($counter),
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function delete(int $id)
@@ -73,7 +66,7 @@ class CounterController extends Controller
             'status' => 'OK',
             'data' => null,
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 
     public function destroy()
@@ -83,13 +76,7 @@ class CounterController extends Controller
             'status' => 'OK',
             'data' => null,
             'error' => null
-        ]);
-    }
-
-    
-    public function currentQueueByUser(int $idUser)
-    {
-
+        ])->setStatusCode(200);
     }
 
     public function currentCounterByUser(int $idUser)
@@ -99,6 +86,6 @@ class CounterController extends Controller
             'status' => 'OK',
             'data' => new CounterResource($counter),
             'error' => null
-        ]);
+        ])->setStatusCode(200);
     }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enum\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class UserRegisterRequest extends FormRequest
 {
@@ -26,7 +28,8 @@ class UserRegisterRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:50'],
             'username' => ['required', 'string', 'min:3', 'max:50'],
             'password' => ['required', 'string', 'min:3', 'max:50'],
-            'password_confirmation' => ['required', 'string', 'same:password', 'min:3', 'max:50']
+            'password_confirmation' => ['required', 'string', 'same:password', 'min:3', 'max:50'],
+            'role' => ["required", Rule::in(['admin', 'operator'])]        
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

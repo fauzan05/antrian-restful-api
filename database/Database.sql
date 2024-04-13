@@ -13,7 +13,6 @@ select * from operational_hours;
 show create table operational_hours;
 select * from personal_access_tokens;
 select * from websockets_statistics_entries;
-drop table websockets_statistics_entries;
 select * from password_reset_tokens;
 select * from counters;
 select * from failed_jobs;
@@ -34,7 +33,8 @@ drop table failed_jobs;
 drop table migrations;
 drop table password_reset_tokens;
 drop table personal_access_tokens;
-
+drop table websockets_statistics_entries;
+drop table app_settings;
 select * from services where name like '%layanan pendaftaran%';
 
 update counters set service_id = null where id = 1;
