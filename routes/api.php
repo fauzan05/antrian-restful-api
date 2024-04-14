@@ -28,7 +28,7 @@ Route::post('/users/login', [AuthController::class, 'login'])->middleware(['user
 Route::group(['middleware' => ['auth:sanctum']], function () {
     // users
     Route::get('/users/current', [AuthController::class, 'get']);
-    Route::put('/users/update-password', [AuthController::class, 'updateCurrent'])
+    Route::put('/users/update-password', [AuthController::class, 'updateCurrentPassword'])
         ->middleware('updateUsers');
     Route::delete('/users/logout', [AuthController::class, 'logout']);
     Route::delete('/users/{idUser}', [AuthController::class, 'delete'])
@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('/app/color-footer', [AppSettingController::class, 'setColorFooterDisplay']);
         
         // files
-        Route::delete('/files/videos/{filename}', [FileController::class, 'deleteVideo'])->middleware('checkVideoFiles');
+        Route::delete('/files/videos/{filename}', [AppSettingController::class, 'deleteVideo'])->middleware('checkVideoFiles');
     });
 
     // queues
@@ -116,10 +116,10 @@ Route::get('/counters', [CounterController::class, 'show']);
 // files
 Route::get('/files/audios', [FileController::class, 'showAllAudios'])->middleware('checkAudioFiles');
 Route::get('/files/audios/{filename}', [FileController::class, 'getAudio'])->middleware('checkAudioFiles');
-Route::get('/files/videos', [FileController::class, 'showAllVideos'])->middleware('checkVideoFiles');
-Route::post('/files/videos', [FileController::class, 'uploadedVideo']);
-Route::delete('/files/videos', [FileController::class, 'deleteAllVideo']);
-Route::get('/files/videos/selected', [FileController::class, 'getVideo']);
+// Route::get('/files/videos', [FileController::class, 'showAllVideos'])->middleware('checkVideoFiles');
+// Route::post('/files/videos', [FileController::class, 'uploadedVideo']);
+// Route::delete('/files/videos', [FileController::class, 'deleteAllVideo']);
+// Route::get('/files/videos/selected', [FileController::class, 'getVideo']);
 
 // app settings
 Route::get('/app/selected-video', [AppSettingController::class, 'getSelectedVideo']);

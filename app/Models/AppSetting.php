@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AdminSetting extends Model
+class AppSetting extends Model
 {
     protected $table = "app_settings";
     protected $primaryKey = "id";

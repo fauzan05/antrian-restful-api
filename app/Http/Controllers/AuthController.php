@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function login(UserLoginRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $user = User::where('username', trim($data['username']))->first();
+        $user = User::where('username', $data['username'])->first();
         $success['token'] = $user->createToken('token-login', ['*'], now()->addDay())->plainTextToken;
         return response()->json([
             "status" => "OK",

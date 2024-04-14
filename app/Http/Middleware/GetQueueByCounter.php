@@ -4,7 +4,6 @@ namespace App\Http\Middleware;
 
 use App\Models\Counter;
 use App\Models\Queue;
-use App\Models\Service;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Exceptions\HttpResponseException;

@@ -20,7 +20,5 @@ class OperationalHoursSeeder extends Seeder
             $operationalHours->days = $days[$i];
             $operationalHours->save();
         }
-
-
     }
 }

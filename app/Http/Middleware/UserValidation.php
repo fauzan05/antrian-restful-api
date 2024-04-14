@@ -6,7 +6,6 @@ use App\Models\Counter;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
-use PHPUnit\Framework\Constraint\Count;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Exceptions\HttpResponseException;

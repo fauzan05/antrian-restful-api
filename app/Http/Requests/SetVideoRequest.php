@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class VideoUploadRequest extends FormRequest
+class SetVideoRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +23,7 @@ class VideoUploadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'video_file' => [
-                'mimes:mp4,mov,mkv,mpeg',
-                'max:50000'
-            ]
+            'video_filename' => ['required','string']
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

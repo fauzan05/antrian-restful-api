@@ -3,44 +3,51 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\SetOperationalHoursRequest;
-use App\Http\Requests\VideoUploadRequest;
-use App\Models\AdminSetting;
+use App\Http\Requests\SetVideoRequest;
+use App\Models\AppSetting;
 use App\Models\OperationalHours;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class AppSettingController extends Controller
 {
-    public function setVideoDisplay(VideoUploadRequest $request)
+    public function setVideoDisplay(SetVideoRequest $request)
     {
-        $request->validated();
-        $originalFilename = $request->file('video_file')->getClientOriginalName();
-        $originalFilename = preg_replace('/[ #%&?=+]/', "_", $originalFilename);
-        $request->file('video_file')->storeAs('public/video', $originalFilename);
+        $data = $request->validated();
         // dd($result);
-        $firstData = AdminSetting::first();
+        $firstData = AppSetting::first();
         if(!$firstData){
-            AdminSetting::create([
-                'selected_video' => $originalFilename
+            AppSetting::create([
+                'selected_video' => $data['video_filename']
             ]);
         }else{
-            AdminSetting::where('id', $firstData->id)->update([
-                'selected_video' => $originalFilename
+            AppSetting::where('id', $firstData->id)->update([
+                'selected_video' => $data['video_filename']
             ]);
         }
         return response()->json([
             "status" => "OK",
-            "data" => $originalFilename,
+            "data" => $data['video_filename'],
             "error" => null
         ]);
     }
 
-    public function getSelectedVideo()
+    public function deleteVideo()
     {
-        $adminSettings = AdminSetting::first();
+        $AppSetting = AppSetting::select('id')->first();
+        if($AppSetting){
+            $AppSetting->update([
+                'selected_video' => null
+            ]);
+        }
+        if(!$AppSetting){
+            AppSetting::create([
+                'selected_video' => null
+            ]);
+        }
         return response()->json([
             "status" => "OK",
-            "data" => $adminSettings->selected_video,
+            "data" => null,
             "error" => null
         ]);
     }
@@ -71,21 +78,21 @@ class AppSettingController extends Controller
             'address_of_health_institute' => 'required|string|max:100',
         ])->validate();
         
-        $adminSettings = AdminSetting::select('id')->first();
-        if(!$adminSettings){
-            $adminSettings = AdminSetting::create([
+        $AppSettings = AppSetting::select('id')->first();
+        if(!$AppSettings){
+            $AppSettings = AppSetting::create([
                 'name_of_health_institute' => $validator['name_of_health_institute'],
                 'address_of_health_institute' => $validator['address_of_health_institute']
             ]);
         }else{
-            $adminSettings = AdminSetting::where('id', $adminSettings->id)->update([
+            $AppSettings = AppSetting::where('id', $AppSettings->id)->update([
                 'name_of_health_institute' => $validator['name_of_health_institute'],
                 'address_of_health_institute' => $validator['address_of_health_institute']
             ]);
         }
         return response()->json([
             "status" => "OK",
-            "data" => AdminSetting::first(),
+            "data" => AppSetting::first(),
             "error" => null
         ]); 
     }
@@ -96,20 +103,20 @@ class AppSettingController extends Controller
             'text_footer_display' => 'required|string|max:100',
         ])->validate();
 
-        $adminSettings = AdminSetting::select('id')->first();
-        if(!$adminSettings)
+        $AppSettings = AppSetting::select('id')->first();
+        if(!$AppSettings)
         {
-            $adminSettings = AdminSetting::create([
+            $AppSettings = AppSetting::create([
                 'text_footer_display' => $validator['text_footer_display']
             ]);
         }else{
-            $adminSettings = AdminSetting::where('id', $adminSettings->id)->update([
+            $AppSettings = AppSetting::where('id', $AppSettings->id)->update([
                 'text_footer_display' => $validator['text_footer_display']
             ]);
         }
         return response()->json([
             "status" => "OK",
-            "data" => AdminSetting::first(),
+            "data" => AppSetting::first(),
             "error" => null
         ]);
     }
@@ -120,20 +127,20 @@ class AppSettingController extends Controller
             'display_footer_color' => 'required|string|max:10',
         ])->validate();
 
-        $adminSettings = AdminSetting::select('id')->first();
-        if(!$adminSettings)
+        $AppSettings = AppSetting::select('id')->first();
+        if(!$AppSettings)
         {
-            $adminSettings = AdminSetting::create([
+            $AppSettings = AppSetting::create([
                 'display_footer_color' => $validator['display_footer_color']
             ]);
         }else{
-            $adminSettings = AdminSetting::where('id', $adminSettings->id)->update([
+            $AppSettings->update([
                 'display_footer_color' => $validator['display_footer_color']
             ]);
         }
         return response()->json([
             "status" => "OK",
-            "data" => AdminSetting::first(),
+            "data" => AppSetting::first(),
             "error" => null
         ]);
     }
@@ -142,7 +149,7 @@ class AppSettingController extends Controller
     {
         return response()->json([
             "status" => "OK",
-            "data" => AdminSetting::first(),
+            "data" => AppSetting::first(),
             "error" => null
         ]);
     }
@@ -166,9 +173,20 @@ class AppSettingController extends Controller
 
     public function showOperationalHours()
     {
+        $operationalHours = OperationalHours::count();
+        // jika hari dalam database operational hours tidak ada, maka buat dulu
+        if ($operationalHours < 7) {
+            $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+            for($i = 0; $i < 7; $i++)
+            {
+                $operationalHours = new OperationalHours();
+                $operationalHours->days = $days[$i];
+                $operationalHours->save();
+            }
+        }
         return response()->json([
             "status" => "OK",
-            "data" => OperationalHours::all(),
+            "data" => OperationalHours::get(),
             "error" => null
         ]);  
     }

@@ -3,11 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class CheckAudioFiles
