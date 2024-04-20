@@ -20,27 +20,32 @@ class QueueController extends Controller
     {
         $data = $request->validated();
         // memilih salah satu layanan dengan role registrasi secara random
-        $registrationService = Service::select('initial')->where('role', 'registration')->get();
+        $registrationServices = Service::select('id','initial')->where('role', 'registration')->get();
+        // menampung counter dengan jumlah antrian terendah
         $lowestQueueCountService = 999999999;
-        for($i = 1; $i <= count($registrationService); $i++) {
+        $selectedRegistrationService = null;
+
+        // agar jika ada lebih dari 1 layanan pendaftaran, maka antriannya bisa saling bergantian dan seimbang
+        foreach($registrationServices as $key => $registrationService) {
             // mencari antrian dengan layanan dipanggilnya paling sedikit
             $registrationNumber = Queue::select('id')->where('registration_service_id', $registrationService->id)
             ->whereDate('created_at', Carbon::today())
             ->count();
+            // dd($registrationNumber);
             if ($registrationNumber < $lowestQueueCountService) {
                 $lowestQueueCountService = $registrationNumber;
+                $selectedRegistrationService = $registrationService;
             }
         }
-        $polyService = Service::select('initial')->where('id', $data['poly_service_id'])->first();
-
+        $polyService = Service::select('id','initial')->where('id', $data['poly_service_id'])->first();
         $polyNumber = Queue::select('id')->where('poly_service_id', $data['poly_service_id'])
             ->whereDate('created_at', Carbon::today())
             ->count();
 
         $queue = new Queue();
-        $queue->registration_number = $registrationService->initial . str_pad($lowestQueueCountService + 1, 3, '0', STR_PAD_LEFT); // A001 (contoh)
+        $queue->registration_number = $selectedRegistrationService->initial . str_pad($lowestQueueCountService + 1, 3, '0', STR_PAD_LEFT); // A001 (contoh)
         $queue->poly_number = $polyService->initial . str_pad($polyNumber + 1, 3, '0', STR_PAD_LEFT);
-        $queue->registration_service_id = $registrationService->id;
+        $queue->registration_service_id = $selectedRegistrationService->id;
         $queue->poly_service_id = $polyService->id;
         $queue->registration_status = 'waiting';
         $queue->poly_status = 'waiting';

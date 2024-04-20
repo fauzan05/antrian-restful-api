@@ -13,11 +13,14 @@ class AppSetting extends Model
     public $incrementing = true;
 
     protected $fillable = [
+        'selected_logo',
         'selected_video',
         'name_of_health_institute',
-        'operational_hours_open',
-        'operational_hours_close',
+        'address_of_health_institute',
         'text_footer_display',
-        'display_footer_color',
+        'header_color',
+        'text_header_color',
+        'footer_color',
+        'text_footer_color',
     ];
 }

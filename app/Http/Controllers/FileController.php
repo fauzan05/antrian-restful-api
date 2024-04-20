@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\VideoUploadRequest;
-use App\Models\AppSetting;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Illuminate\Http\Exceptions\HttpResponseException;
 
 class FileController extends Controller
 {

@@ -61,15 +61,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
             ->middleware('getCounterById');
         Route::delete('/counters', [CounterController::class, 'destroy']);
 
-        // admin settings
+        // app settings
+        Route::post('/app/video', [AppSettingController::class, 'setVideoDisplay']);
+        Route::post('/app/logo', [AppSettingController::class, 'setLogo']);
         Route::put('/app/operational-hours', [AppSettingController::class, 'setOperationalHours']);
         Route::delete('/app/operational-hours', [AppSettingController::class, 'deleteAllOperationalHours']);
         Route::put('/app/identity', [AppSettingController::class, 'setIdentityOfInstitute']);
         Route::put('/app/text-footer', [AppSettingController::class, 'setTextFooterDisplay']);
-        Route::put('/app/color-footer', [AppSettingController::class, 'setColorFooterDisplay']);
-        
-        // files
-        Route::delete('/files/videos/{filename}', [AppSettingController::class, 'deleteVideo'])->middleware('checkVideoFiles');
+        Route::put('/app/header-footer/colors', [AppSettingController::class, 'setColorHeaderFooter']);
+        Route::delete('/app/logo', [AppSettingController::class, 'deleteLogo']);
+        Route::delete('/app/video', [AppSettingController::class, 'deleteVideo']);
     });
 
     // queues
@@ -123,6 +124,5 @@ Route::get('/files/audios/{filename}', [FileController::class, 'getAudio'])->mid
 
 // app settings
 Route::get('/app/selected-video', [AppSettingController::class, 'getSelectedVideo']);
-Route::post('/app/videos', [AppSettingController::class, 'setVideoDisplay']);
 Route::get('/app/operational-hours', [AppSettingController::class, 'showOperationalHours']);
 Route::get('/app', [AppSettingController::class, 'showAllSettings']);

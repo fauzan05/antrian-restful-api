@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('app_settings', function (Blueprint $table) {
             $table->id();
+            $table->string('selected_logo')->nullable();
             $table->string('selected_video')->nullable();
             $table->string('name_of_health_institute')->nullable();
             $table->string('address_of_health_institute')->nullable();
             $table->string('text_footer_display')->nullable();
-            $table->string('display_footer_color')->nullable();
+            $table->string('header_color')->nullable();
+            $table->string('text_header_color')->nullable();
+            $table->string('footer_color')->nullable();
+            $table->string('text_footer_color')->nullable();
             $table->timestamps();
         });
     }

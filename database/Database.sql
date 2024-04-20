@@ -8,7 +8,7 @@ show create table users;
 select * from migrations;
 select * from services;
 select * from users;
-select * from admin_settings;
+select * from app_settings;
 select * from operational_hours;
 show create table operational_hours;
 select * from personal_access_tokens;

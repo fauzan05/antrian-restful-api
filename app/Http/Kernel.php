@@ -94,7 +94,6 @@ class Kernel extends HttpKernel
         'serviceNameIsExist' => ServiceNameIsExist::class,
         'getQueueById' => QueueIsExist::class,
         'checkAudioFiles' => CheckAudioFiles::class,
-        'checkVideoFiles' => CheckVideoFiles::class,
         'getQueueByService' => GetQueueByService::class,
         'getQueueByCounter' => GetQueueByCounter::class,
         'getQueueByUser' => GetQueueByUser::class,
