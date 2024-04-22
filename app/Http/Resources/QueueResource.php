@@ -16,7 +16,7 @@ class QueueResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $host = 'http://127.0.0.1:8001/assets/audio/';
+        $host = 'http://localhost:8001/assets/audio/';
         // bagian pendaftaran
         $registrationNumber = str_split((string) $this->registration_number);
         $registrationIntval = $registrationNumber;
