@@ -1,0 +1,1853 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Antrian Restful API",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000"
+    }
+  ],
+  "paths": {
+    "/api/users/register": {
+      "post": {
+        "tags": [
+          "Auth API"
+        ],
+        "description": "Register new user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "role": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "password_confirmation": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "username",
+                  "role",
+                  "password",
+                  "password_confirmation"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success register new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/login": {
+      "post": {
+        "tags": [
+          "Auth API"
+        ],
+        "description": "Login user",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success login user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserResponse"
+                    },
+                    "token": {
+                      "type": "string"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/logout": {
+      "delete": {
+        "tags": [
+          "Auth API"
+        ],
+        "description": "Logout current user",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success logout current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/current": {
+      "get": {
+        "description": "Get current user data",
+        "tags": [
+          "Auth API"
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get current user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UserResponse"
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/update-password": {
+      "put": {
+        "tags": [
+          "Auth API"
+        ],
+        "description": "Update current user password",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "old_password": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  },
+                  "new_password_confirmation": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update current user password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "put": {
+        "tags": [
+          "Auth API"
+        ],
+        "description": "Update current user data",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "old_password": {
+                    "type": "string"
+                  },
+                  "new_password": {
+                    "type": "string"
+                  },
+                  "new_password_confirmation": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "username",
+                  "old_password",
+                  "new_password",
+                  "new_password_confirmation"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update current user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Auth API"
+        ],
+        "description": "Delete user by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete user by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "Get all operator user data",
+        "tags": [
+          "Auth API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all operator user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UserResponse"
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services": {
+      "post": {
+        "tags": [
+          "Service API"
+        ],
+        "description": "Create new service",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "uniqueItems": true
+                  },
+                  "initial": {
+                    "type": "string",
+                    "uniqueItems": true
+                  },
+                  "role": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "initial",
+                  "role"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success create new service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ServiceResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get all service data",
+        "tags": [
+          "Service API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all service data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UserResponse"
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Service API"
+        ],
+        "description": "Delete all service",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete all service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services/{serviceId}": {
+      "put": {
+        "tags": [
+          "Service API"
+        ],
+        "description": "Update service by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "uniqueItems": true
+                  },
+                  "initial": {
+                    "type": "string",
+                    "uniqueItems": true
+                  },
+                  "role": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "initial",
+                  "role"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update service by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Service API"
+        ],
+        "description": "Get service data by id",
+        "parameters": [
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get service data by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ServiceResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Service API"
+        ],
+        "description": "Delete service by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "serviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete service by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/counters": {
+      "post": {
+        "tags": [
+          "Counter API"
+        ],
+        "description": "Create new counter",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "uniqueItems": true
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "uniqueItems": true
+                  },
+                  "service_id": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "user_id",
+                  "service_id",
+                  "is_active"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success create new counter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CounterResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get all counter data",
+        "tags": [
+          "Counter API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all counter data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CounterResponse"
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Counter API"
+        ],
+        "description": "Delete all counter",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete all counter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/counters/{counterId}": {
+      "get": {
+        "tags": [
+          "Counter API"
+        ],
+        "description": "Get counter data by id",
+        "parameters": [
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get counter data by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CounterResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Counter API"
+        ],
+        "description": "Update counter by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "uniqueItems": true
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "uniqueItems": true
+                  },
+                  "service_id": {
+                    "type": "integer"
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "name",
+                  "user_id",
+                  "service_id",
+                  "is_active"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update counter by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Counter API"
+        ],
+        "description": "Delete counter by id",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete counter by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/counters/users/{userId}": {
+      "get": {
+        "tags": [
+          "Counter API"
+        ],
+        "description": "Get counter data by user id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get counter data by user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CounterResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues": {
+      "post": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Create new queue",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "poly_service_id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "poly_service_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success create new queue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "description": "Get all queue data",
+        "tags": [
+          "Queue API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/QueueResponse"
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Delete all queue",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success delete all queue",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/{queueId}": {
+      "put": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Update queue by id (The update process depends on whose counter is doing the update) and just an operator can be update the queue",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "queueId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "counter_id": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer",
+                    "uniqueItems": true
+                  }
+                },
+                "required": [
+                  "counter_id",
+                  "status"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success update queue by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get queue data by id",
+        "parameters": [
+          {
+            "name": "queueId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get queue data by id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/count": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Count all queue data",
+        "responses": {
+          "200": {
+            "description": "Success all queue data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/counters/{counterId}": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get all queue data by counter id",
+        "parameters": [
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all queue data by counter id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/counters/current": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get all current queue data for each counters",
+        "responses": {
+          "200": {
+            "description": "Success get all current queue data for each counters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "number": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string",
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/counters/{counterId}/current-number": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get current queue number with counter name (last called) data by counter id",
+        "parameters": [
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get current queue number with counter name (last called) data by counter id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "number": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/counters/{counterId}/current": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get current queue (last called) data by counter id",
+        "parameters": [
+          {
+            "name": "counterId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get current queue (last called) data by counter id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/users/{userId}/current": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get current queue (last called) data by user id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get current queue (last called) data by user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/users/{userId}": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get all queue data by user id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get all queue data by user id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/QueueResponse"
+                      }
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/queues/services/{serviceId}/current": {
+      "get": {
+        "tags": [
+          "Queue API"
+        ],
+        "description": "Get current queue (last called) data by service id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get current queue (last called) data by service id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/QueueResponse"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "CategoryAuth": {
+        "name": "Authentication Seblak Bombom API",
+        "type": "apiKey",
+        "in": "header",
+        "description": "Authentication for  Seblak Bombom API"
+      }
+    },
+    "schemas": {
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "initial": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "CounterResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "operator": {
+            "$ref": "#/components/schemas/UserResponse"
+          },
+          "service": {
+            "$ref": "#/components/schemas/ServiceResponse"
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      },
+      "QueueResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "registration_number": {
+            "type": "string"
+          },
+          "poly_number": {
+            "type": "string"
+          },
+          "registration_service_id": {
+            "type": "integer"
+          },
+          "poly_service_id": {
+            "type": "integer"
+          },
+          "counter_registration_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "counter_poly_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "registration_status": {
+            "type": "string"
+          },
+          "poly_status": {
+            "type": "string"
+          },
+          "service_registration": {
+            "$ref": "#/components/schemas/ServiceResponse"
+          },
+          "service_poly": {
+            "$ref": "#/components/schemas/ServiceResponse"
+          },
+          "date": {
+            "type": "string"
+          },
+          "link-audio-registration": {
+            "type": "array",
+            "nullable": true
+          },
+          "link-audio-poly": {
+            "type": "array",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

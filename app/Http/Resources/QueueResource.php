@@ -29,7 +29,7 @@ class QueueResource extends JsonResource
         $polyIntval = $polyNumber;
         array_shift($polyIntval);
         $polyIntval = implode($polyIntval);
-        $counterPoly = Counter::where('id', $this->counter_poly_id)->first();
+        // $counterPoly = Counter::where('id', $this->counter_poly_id)->first();
         // $counterPoly = explode(" ", $counterPoly->name);
         return [
             'id' => $this->id,

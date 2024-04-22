@@ -51,10 +51,9 @@ class CounterController extends Controller
         $counter->is_active = (boolean)$data['is_active'] ? true : false;
         $counter->fill($data);
         $counter->save();
-        $counter = Counter::where('id', $idCounter)->first();
         return response()->json([
             'status' => 'OK',
-            'data' => new CounterResource($counter),
+            'data' => null,
             'error' => null
         ])->setStatusCode(200);
     }

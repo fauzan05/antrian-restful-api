@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\QueueCreateRequest;
+use App\Http\Requests\UpdateQueueStatusRequest;
 use App\Http\Resources\CurrentQueueResource;
 use App\Http\Resources\QueueResource;
 use App\Http\Resources\ShowQueueResource;
@@ -11,8 +12,6 @@ use App\Models\Queue;
 use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Validator;
 
 class QueueController extends Controller
 {
@@ -192,11 +191,9 @@ class QueueController extends Controller
         }
     }
 
-    public function update(int $idQueue, Request $request)
+    public function update(int $idQueue, UpdateQueueStatusRequest $request)
     {
-        $data = Validator::make($request::all(), [
-            "counter_id" => ['required', 'integer']
-        ])->validate();
+        $data = $request->validated();
         $counterServiceRole = DB::table('counters')
             ->join('services', 'services.id', '=', 'counters.service_id')
             ->select('services.role')
@@ -204,27 +201,21 @@ class QueueController extends Controller
             ->first();
 
         if ($counterServiceRole->role == 'registration') {
-            $validateRegisterStatus = Validator::make($request::all(), [
-                "status" => ['required', 'string'],
-            ])->validate();
-            DB::transaction(function () use (&$idQueue, &$data, &$validateRegisterStatus) {
+            DB::transaction(function () use (&$idQueue, &$data) {
                 Queue::where('id', $idQueue)
                     ->whereDate('created_at', Carbon::today())
                     ->update([
-                        'registration_status' => $validateRegisterStatus['status'],
+                        'registration_status' => $data['status'],
                         'counter_registration_id' => trim($data['counter_id']),
                     ]);
             }, 5);
         }
         if ($counterServiceRole->role == 'poly') {
-            $validatePolyStatus = Validator::make($request::all(), [
-                "status" => ['required', 'string'],
-            ])->validate();
-            DB::transaction(function () use (&$idQueue, &$data, &$validatePolyStatus) {
+            DB::transaction(function () use (&$idQueue, &$data) {
                 Queue::where('id', $idQueue)
                     ->whereDate('created_at', Carbon::today())
                     ->update([
-                        'poly_status' => $validatePolyStatus['status'],
+                        'poly_status' => $data['status'],
                         'counter_poly_id' => trim($data['counter_id']),
                     ]);
             }, 5);
@@ -439,7 +430,7 @@ class QueueController extends Controller
         }
     }
 
-    public function allCurrentQueue()
+    public function allCurrentQueueByEachCounters()
     {
         $counters = Counter::all();
         $queues = [];

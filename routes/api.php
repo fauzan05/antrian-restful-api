@@ -71,6 +71,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::put('/app/header-footer/colors', [AppSettingController::class, 'setColorHeaderFooter']);
         Route::delete('/app/logo', [AppSettingController::class, 'deleteLogo']);
         Route::delete('/app/video', [AppSettingController::class, 'deleteVideo']);
+        
+        // queues
+        Route::delete('/queues', [QueueController::class, 'destroy']);
     });
 
     // queues
@@ -92,18 +95,15 @@ Route::get('/queues/{idQueue}', [QueueController::class, 'get'])
     ->where('idQueue', '[0-9]+')->middleware('getQueueById');
 Route::get('/queues/counters/{idCounter}', [QueueController::class, 'showQueueByCounter'])
     ->where('idCounter', '[0-9]+')->middleware('getCounterById');
-Route::get('/queues/counters/{idCounter}/current-queue', [QueueController::class, 'allCurrentQueueByCounter']);
-Route::get('/queues/users/{idUser}/current-queue', [QueueController::class, 'allCurrentQueueByUser']);
-Route::get('/queues/counters/current-queue', [QueueController::class, 'allCurrentQueue']);
+Route::get('/queues/counters/{idCounter}/current-number', [QueueController::class, 'allCurrentQueueByCounter']);
+Route::get('/queues/users/{idUser}/current', [QueueController::class, 'allCurrentQueueByUser']);
+Route::get('/queues/counters/current', [QueueController::class, 'allCurrentQueueByEachCounters']);
 Route::get('/queues/users/{idUser}', [QueueController::class, 'showQueueByUser'])
     ->where('idUser', '[0-9]+')->middleware(['getQueueByUser', 'counterServiceNotValid']);
 Route::get('/queues/services/{idService}/current', [QueueController::class, 'currentByService'])
     ->where('idService', '[0-9]+')->middleware('getQueueByService');
 Route::get('/queues/counters/{idCounter}/current', [QueueController::class, 'currentByCounter'])
     ->where('idCounter', '[0-9]+')->middleware('getQueueByCounter');
-Route::get('/counters/users/{idUser}', [CounterController::class, 'currentCounterByUser'])
-    ->where('idUser', '[0-9]+')->middleware('userCounterValidation');
-Route::delete('/queues', [QueueController::class, 'destroy']);
 
 // users
 Route::get('/users', [AuthController::class, 'show']);
@@ -113,6 +113,8 @@ Route::get('/counters/{idCounter}', [CounterController::class, 'get'])
     ->where('idCounter', '[0-9]+')
     ->middleware('getCounterById');
 Route::get('/counters', [CounterController::class, 'show']);
+Route::get('/counters/users/{idUser}', [CounterController::class, 'currentCounterByUser'])
+    ->where('idUser', '[0-9]+')->middleware('userCounterValidation');
 
 // files
 Route::get('/files/audios', [FileController::class, 'showAllAudios'])->middleware('checkAudioFiles');

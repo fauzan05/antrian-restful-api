@@ -72,7 +72,7 @@ class AuthController extends Controller
         $user->save();
         return response()->json([
             "status" => "OK",
-            "data" => new UserResource($user),
+            "data" => null,
             "error" => null
         ])->setStatusCode(200);   
     }
@@ -86,7 +86,7 @@ class AuthController extends Controller
         $user->save();
         return response()->json([
             "status" => "OK",
-            "data" => new UserResource($user),
+            "data" => null,
             "error" => null
         ])->setStatusCode(200);
     }

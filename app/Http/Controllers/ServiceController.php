@@ -58,7 +58,7 @@ class ServiceController extends Controller
         $service->save();
         return response()->json([
             'status' => "OK",
-            'data' => new ServiceResource($service),
+            'data' => null,
             'error' => null
         ])->setStatusCode(200);
     }
