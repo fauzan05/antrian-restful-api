@@ -225,7 +225,7 @@ class QueueController extends Controller
             ->get();
         return response()->json([
             'status' => 'OK',
-            'data' => QueueResource::collection($queue),
+            'data' => null,
             'error' => null,
         ])->setStatusCode(200);
     }
@@ -443,6 +443,7 @@ class QueueController extends Controller
                 ];
                 $result = Queue::where('counter_registration_id', $counter->id)
                     ->whereIn('registration_status', ['called', 'skipped'])
+                    ->whereDate('created_at', Carbon::today())
                     ->orderby('updated_at', 'desc')
                     ->first();
                 if ($result) {
@@ -458,6 +459,7 @@ class QueueController extends Controller
                 ];
                 $result = Queue::where('counter_poly_id', $counter->id)
                     ->whereIn('poly_status', ['called', 'skipped'])
+                    ->whereDate('created_at', Carbon::today())
                     ->orderby('updated_at', 'desc')
                     ->first();
                 if ($result) {

@@ -3,7 +3,6 @@
 use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CounterController;
-use App\Http\Controllers\FileController;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
@@ -62,13 +61,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::delete('/counters', [CounterController::class, 'destroy']);
 
         // app settings
-        Route::post('/app/video', [AppSettingController::class, 'setVideoDisplay']);
-        Route::post('/app/logo', [AppSettingController::class, 'setLogo']);
+        Route::patch('/app/video', [AppSettingController::class, 'setVideoDisplay']);
+        Route::patch('/app/logo', [AppSettingController::class, 'setLogo']);
         Route::put('/app/operational-hours', [AppSettingController::class, 'setOperationalHours']);
         Route::delete('/app/operational-hours', [AppSettingController::class, 'deleteAllOperationalHours']);
-        Route::put('/app/identity', [AppSettingController::class, 'setIdentityOfInstitute']);
-        Route::put('/app/text-footer', [AppSettingController::class, 'setTextFooterDisplay']);
-        Route::put('/app/header-footer/colors', [AppSettingController::class, 'setColorHeaderFooter']);
+        Route::patch('/app/identity', [AppSettingController::class, 'setIdentityOfInstitute']);
+        Route::patch('/app/text-footer', [AppSettingController::class, 'setTextFooterDisplay']);
+        Route::patch('/app/header-footer/colors', [AppSettingController::class, 'setColorHeaderFooter']);
         Route::delete('/app/logo', [AppSettingController::class, 'deleteLogo']);
         Route::delete('/app/video', [AppSettingController::class, 'deleteVideo']);
         
@@ -116,15 +115,6 @@ Route::get('/counters', [CounterController::class, 'show']);
 Route::get('/counters/users/{idUser}', [CounterController::class, 'currentCounterByUser'])
     ->where('idUser', '[0-9]+')->middleware('userCounterValidation');
 
-// files
-Route::get('/files/audios', [FileController::class, 'showAllAudios'])->middleware('checkAudioFiles');
-Route::get('/files/audios/{filename}', [FileController::class, 'getAudio'])->middleware('checkAudioFiles');
-// Route::get('/files/videos', [FileController::class, 'showAllVideos'])->middleware('checkVideoFiles');
-// Route::post('/files/videos', [FileController::class, 'uploadedVideo']);
-// Route::delete('/files/videos', [FileController::class, 'deleteAllVideo']);
-// Route::get('/files/videos/selected', [FileController::class, 'getVideo']);
-
 // app settings
-Route::get('/app/selected-video', [AppSettingController::class, 'getSelectedVideo']);
-Route::get('/app/operational-hours', [AppSettingController::class, 'showOperationalHours']);
 Route::get('/app', [AppSettingController::class, 'showAllSettings']);
+Route::get('/app/operational-hours', [AppSettingController::class, 'showOperationalHours']);

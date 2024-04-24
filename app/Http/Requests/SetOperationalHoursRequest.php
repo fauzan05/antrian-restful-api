@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SetOperationalHoursRequest extends FormRequest
 {
@@ -24,5 +25,16 @@ class SetOperationalHoursRequest extends FormRequest
         return [
             'data' => ['required', 'array']
         ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(response([
+            'status' => 'Validation Error',
+            'data' => null,
+            'error' => [
+                'error_message' => $validator->getMessageBag()
+            ]      
+        ], 400));
     }
 }

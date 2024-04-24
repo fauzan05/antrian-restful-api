@@ -50,7 +50,7 @@ class AppSettingController extends Controller
         }
         return response()->json([
             "status" => "OK",
-            "data" => $data['logo_filename'],
+            "data" => null,
             "error" => null
         ]);
     }
@@ -100,10 +100,9 @@ class AppSettingController extends Controller
                 'is_active' => $item[2]
             ]);
         endforeach;
-        $operationalHours = OperationalHours::all();
         return response()->json([
             "status" => "OK",
-            "data" => $operationalHours,
+            "data" => null,
             "error" => null
         ]);
     }
@@ -127,7 +126,7 @@ class AppSettingController extends Controller
 
         return response()->json([
             "status" => "OK",
-            "data" => $AppSettings,
+            "data" => null,
             "error" => null
         ]);
     }
@@ -151,7 +150,7 @@ class AppSettingController extends Controller
         }
         return response()->json([
             "status" => "OK",
-            "data" => AppSetting::first(),
+            "data" => null,
             "error" => null
         ]);
     }
@@ -179,7 +178,7 @@ class AppSettingController extends Controller
 
         return response()->json([
             "status" => "OK",
-            "data" => AppSetting::first(),
+            "data" => null,
             "error" => null
         ]);
     }
