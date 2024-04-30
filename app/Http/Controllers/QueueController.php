@@ -222,10 +222,10 @@ class QueueController extends Controller
         }
         $queue = Queue::where('id', $idQueue)
             ->whereDate('created_at', Carbon::today())
-            ->get();
+            ->first();
         return response()->json([
             'status' => 'OK',
-            'data' => null,
+            'data' => new QueueResource($queue),
             'error' => null,
         ])->setStatusCode(200);
     }

@@ -1254,7 +1254,7 @@
         "tags": [
           "Queue API"
         ],
-        "description": "Update queue by id (The update process depends on whose counter is doing the update) and just an operator can be update the queue",
+        "description": "Update queue by id (The update process depends on whose counter is doing the update) and just an operator can be update the status queue too",
         "parameters": [
           {
             "name": "Authorization",
@@ -1307,8 +1307,7 @@
                       "type": "string"
                     },
                     "data": {
-                      "type": "object",
-                      "nullable": true
+                      "$ref": "#/components/schemas/QueueResponse"
                     },
                     "error": {
                       "type": "object",
