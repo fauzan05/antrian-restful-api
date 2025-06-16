@@ -1,76 +1,93 @@
-# Aplikasi Antrian (RESTful API)
+# Queue Application (RESTful API)
 
 ## Background
-Berawal dari sebuah rasa penasaran dan mencoba untuk membuat aplikasi antrian, karena sebelumnya bekerja di sebuah perusahaan kecil yang membuat mesin antrian. Namun kali ini, saya membuat sebuah aplikasi yang full di web, tidak ada campur tangan mikrokontroller.
+
+This project began out of curiosity and interest in building a queueing application. Previously, I worked at a small company that developed queueing machines. However, this time I created a fully web-based application without any involvement of microcontrollers.
 
 ## Requirements
 
-- PHP 8.2
-- Docker Compose
-- Laravel 10
-- Livewire 3
+- PHP 8.2  
+- Docker Compose  
+- Laravel 10  
+- Livewire 3  
 - MariaDB 11.4.1
 
 ## Installation
 
-Jika menggunakan database yang running di docker container, maka jalankan perintah 
-```
+If you're using a database running in a Docker container, run the following command in the root directory to start the MariaDB container and expose its port:
+
+```bash
 docker compose start
 ```
-pada root directory untuk membuat database MariaDB di sebuah kontainer dan di expose port-nya.
-Jika tidak ingin menggunakan docker container, tinggal gunakan XAMPP/MAMP atau MariaDB langsung di komputer dengan konfigurasi port yang 
-ada di file .env .
 
-<br>
+If you prefer not to use Docker, you can use XAMPP/MAMP or a local MariaDB installation. Just make sure the port configuration matches the one defined in the `.env` file.
 
-Kemudian, setelah aplikasi database sudah dijalankan, saatnya melakukan insert tabel ke database tersebut sesuai dengan nama database yang sudah diatur di file .env . Caranya ketikkan perintah berikut :
+After the database is up and running, run the following command to insert the tables into the database (make sure the database name is set correctly in your `.env` file):
 
-```
+```bash
 php artisan migrate
 ```
 
-Untuk folder "antrian-consume-api" tidak menggunakan database MariaDB, melainkan hanya sqlite saja karena tidak membutuhkan data yang banyak dan berubah-ubah.
+> ⚠️ The `antrian-consume-api` folder does **not** use MariaDB. It uses SQLite instead since the data is minimal and not frequently updated.
 
-Setelah itu kemudian, jalankan perintah berikut di root directory agar menjalankan server localhost pada port 8000 dan host localhost.
-```
+Then, run the following command in the root directory to start the Laravel development server on port 8000:
+
+```bash
 php artisan serve --port=8000 --host=localhost
 ```
 
+### Run Frontend App
 
-<br>
+After the Queue RESTful API is running, navigate to the `antrian-consume-api` folder and run the following command:
 
-Setelah Antrian RESTful API-nya dijalankan, maka API sudah bisa di consume. Kemudian buka file yang ada di folder "antrian-consume-api" dan jalankan perintah berikut pada root directory-nya :
-
-```
+```bash
 php artisan serve --port=8001 --host=localhost
 ```
 
-Perintah diatas untuk menjalankan server di port 8001 dan host localhost. Setelah itu jalankan perintah berikut di root directory-nya juga :
+This starts the front-end server on port 8001.
 
-```
+To enable real-time communication (similar to WebSocket), run:
+
+```bash
 php artisan websockets:serve
 ```
-Perintah diatas untuk menjalankan laravel Echo agar bisa bertukar data secara real-time seperti Websocket dalam 1 lingkup aplikasi.
-Kemudian jalankan juga perintah berikut :
 
-```
+Then, also start the queue worker to enable asynchronous processing of queue numbers:
+
+```bash
 php artisan queue:work
 ```
-Perintah diatas untuk menjalankan Queue, agar nomor antriannya diproses secara tidak langsung. Sebenarnya fitur Queue yang digunakan pada aplikasi "antrian consume api" ini hanyalah percobaan saya dalam menggunakan fitur di laravel yaitu laravel Queue. Dalam aplikasi tersebut harus dijalankan perintah tersebut agar saat pemanggilan nomor dapat diproses.
 
-Setelah semuanya dijalankan, tinggal buka di browser http://localhost:8001/ maka akan secara otomatis diarahkan ke halaman home dari aplikasinya. Dan sekarang tinggal buat akun admin menggunakan endpoint api register. Untuk lebih lengkapnya cek pada folder "antrian-restful-api" dan cari folder "docs", kemudian buka file api-specs.json untuk melihat semua endpoint-nya.
+> ⚠️ The queue functionality in this project is experimental, meant to explore Laravel’s Queue feature. This command must be running for queue calls to be processed correctly.
 
-<br>
+Once everything is up, open your browser and go to:
+
+```
+http://localhost:8001/
+```
+
+You will be redirected to the application’s homepage. From here, you can register an admin account using the API's register endpoint. To see the full list of available endpoints, navigate to the `antrian-restful-api/docs` folder and open the `api-specs.json` file.
+
+---
 
 ## Specification
-Aplikasi ini memiliki spesifikasi dan fitur sebagai berikut :
-- Admin tidak memiliki tingkatan, jadi jika membuat lebih dari 1 akun dengan role admin maka tidak akan berpengaruh apakah admin yang satunya posisinya lebih tinggi dari admin yang lain.
-- Pengunjung mendapatkan 2 nomor antrian. Yang pertama adalah nomor antrian pendaftaran, dan yang kedua adalah nomor antrian poli.
-- Operator yang bertugas di loket yang melayani layanan poli tidak akan mendapatkan nomor antrian terbaru hingga nomor antrian di layanan registrasi berhasil dipanggil.
-- Ketika operator menekan button call, button tersebut akan ter-disabled dan setelah itu akan ter-enabled lagi secara otomatis setelah audio antrian berhasil diputar hingga tuntas.
-- 1 layanan bisa digunakan di lebih dari 1 loket. Namun 1 loket hanya bisa melayani 1 layanan saja.
-- Adanya jadwal jam operasional, yang dimana ketika diaktifkan maka setiap request antrian baru akan selalu di validasi apakah jam sekarang sudah melewati batas yang ditentukan (jam buka/tutup). Jika iya maka akan menampilkan informasi bahwa sudah tutup/belum dibuka.
 
-<br>
+This application has the following features:
 
-Aplikasi ini dibagi menjadi 2 bagian, yaitu API dan Front-end. Untuk API-nya sendiri ada di folder "antrian-restful-api", dan front-endnya ada di folder "antrian-consume-api". Keduanya harus dijalankan bersama-sama agar dapat berjalan dengan baik. Untuk melihat endpoint API-nya, masuk ke folder "antrian-restful-api" dan buka folder "docs". Disitu ada file api-specs.json yang akan membantu dalam memahami response dan request yang dibutuhkan.
+- Admins have no hierarchy. All admin users have equal privileges regardless of how many are created.
+- Visitors receive two queue numbers: one for registration and one for the clinic (poli).
+- Clinic service operators will not receive the next queue number until the corresponding registration number has been called.
+- When the operator clicks the **Call** button, it will become disabled and re-enabled automatically after the queue announcement audio finishes.
+- A single service can be handled at multiple counters. However, a single counter can only serve one service.
+- There is an operational hours feature. When enabled, new queue requests are validated against opening/closing times. If a request is made outside the set hours, the system will respond with a message such as "Closed" or "Not Yet Open".
+
+---
+
+## Structure
+
+This application is divided into two main parts:
+
+- `antrian-restful-api` — the RESTful API backend
+- `antrian-consume-api` — the front-end interface that consumes the API
+
+Both parts must be running simultaneously for the system to function correctly. To explore the available API endpoints, go to the `antrian-restful-api/docs` folder and open the `api-specs.json` file. This file contains detailed information about all available requests and responses.
