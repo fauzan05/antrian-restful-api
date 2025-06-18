@@ -36,6 +36,10 @@ Then, run the following command in the root directory to start the Laravel devel
 php artisan serve --port=8000 --host=localhost
 ```
 
+But if you have no data, you have to create all users dummy on seeders, then select the UserSeeder.php. So you have to run the following command in the root directory to start that seeder :
+```bash
+php artisan db:seed UserSeeder
+```
 ### Run Frontend App
 
 After the Queue RESTful API is running, navigate to the `antrian-consume-api` folder and run the following command:
