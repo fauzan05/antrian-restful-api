@@ -18,8 +18,7 @@ class UpdateCounterUserUnique
     public function handle(Request $request, Closure $next): Response
     {
         $counter = Counter::find($request->idCounter);
-        
-        if($counter->user->id != $request->user_id)
+        if($counter->user->id == $request->user_id && $counter->id == $request->idCounter)
         {
             throw new HttpResponseException(response()->json([
                 "status" => "Conflict",
